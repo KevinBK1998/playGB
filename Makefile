@@ -1,4 +1,4 @@
 run: build
 	./a.out
-build:
-	g++ src/main.cpp
+build: src/main.cpp src/myFunctions.cpp
+	g++ src/main.cpp src/myFunctions.cpp
