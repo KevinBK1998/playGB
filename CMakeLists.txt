@@ -21,10 +21,16 @@ add_executable(
   test/test.cpp
   src/myFunctions.cpp
 )
+
+add_executable(MemoryTest test/MemoryTest.cpp src/Memory.cpp)
+
 target_link_libraries(
   unit_test
   GTest::gtest_main
 )
 
+target_link_libraries(MemoryTest GTest::gtest_main)
+
 include(GoogleTest)
 gtest_discover_tests(unit_test)
+gtest_discover_tests(MemoryTest)

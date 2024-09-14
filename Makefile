@@ -1,14 +1,17 @@
 EXECUTABLE = a.out
 
-.PHONY: build run test
+.PHONY: build clean run test
+
+build: $(EXECUTABLE)
+
+clean:
+	rm -f $(EXECUTABLE)
 
 run: $(EXECUTABLE)
 	./$(EXECUTABLE)
 
-build: $(EXECUTABLE)
-
-$(EXECUTABLE): src/main.cpp src/myFunctions.cpp
-	g++ src/main.cpp src/myFunctions.cpp -o $@
+$(EXECUTABLE): src/main.cpp src/myFunctions.cpp src/Memory.cpp
+	g++ $^ -o $@
 
 build-test: $(EXECUTABLE) CMakeLists.txt
 	cmake -S . -B cmake-build
