@@ -5,8 +5,9 @@ A GameBoy Emulator for fun
 Play games on playGB
 
 # Commands
-* `make build`
-* `make run`
+* `make build` - to build
+* `make run` - to run
+* `make test` - to run test
 
 # Acknowledgments
 * Imran Nazar
