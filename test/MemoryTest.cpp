@@ -3,5 +3,5 @@
 
 TEST(MemoryTest, load)
 {
-    ASSERT_EQ(load("rom/bios.gb"), 0x31);
+    ASSERT_EQ(load("../test/test.bin"), 0x31);
 }

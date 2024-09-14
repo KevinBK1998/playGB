@@ -14,23 +14,10 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-enable_testing()
-
-add_executable(
-  unit_test
-  test/test.cpp
-  src/myFunctions.cpp
-)
-
 add_executable(MemoryTest test/MemoryTest.cpp src/Memory.cpp)
-
-target_link_libraries(
-  unit_test
-  GTest::gtest_main
-)
-
 target_link_libraries(MemoryTest GTest::gtest_main)
 
+enable_testing()
 include(GoogleTest)
-gtest_discover_tests(unit_test)
+
 gtest_discover_tests(MemoryTest)

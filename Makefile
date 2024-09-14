@@ -10,7 +10,7 @@ clean:
 run: $(EXECUTABLE)
 	./$(EXECUTABLE)
 
-$(EXECUTABLE): src/main.cpp src/myFunctions.cpp src/Memory.cpp
+$(EXECUTABLE): src/main.cpp src/Memory.cpp
 	g++ $^ -o $@
 
 build-test: $(EXECUTABLE) CMakeLists.txt
@@ -20,3 +20,6 @@ build-test: $(EXECUTABLE) CMakeLists.txt
 
 test: build-test
 	ctest --test-dir cmake-build
+
+test-failed-verbose: build-test
+	ctest --test-dir cmake-build --rerun-failed --output-on-failure
