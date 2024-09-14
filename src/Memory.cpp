@@ -1,14 +1,23 @@
 #include <fstream>
 #include <string>
-#include "memory.h"
+#include <stdint.h>
+#include "Memory.h"
 
 using namespace std;
 
-int load(string filename)
+Memory::Memory(std::string filename)
 {
-    char c;
     ifstream fin(filename);
-    if (fin.get(c))
-        return c;
-    return -1;
+    char c;
+    int i = 0;
+    while (fin)
+    {
+        fin.get(c);
+        rom[i++] = c;
+    }
+}
+
+uint8_t Memory::read(uint16_t address)
+{
+    return rom[address];
 }

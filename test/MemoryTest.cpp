@@ -1,7 +1,14 @@
 #include <gtest/gtest.h>
 #include "../src/Memory.h"
 
-TEST(MemoryTest, load)
+class MemoryTest : public testing::Test
 {
-    ASSERT_EQ(load("../test/test.bin"), 0x31);
+protected:
+    Memory mmu = Memory("../test/test.bin");
+};
+
+TEST_F(MemoryTest, readWorks)
+{
+    ASSERT_EQ(mmu.read(0), 0x31);
+    ASSERT_EQ(mmu.read(1), 0xFE);
 }

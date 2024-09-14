@@ -5,10 +5,10 @@ using namespace std;
 
 int main()
 {
-    // char c;
-    char c = load("rom/bios.gb");
-    // ifstream fin("rom/bios.gb");
-    // fin.get(c);
-    cout << hex << uppercase << unsigned(c) << endl;
+    Memory mmu("rom/bios.gb");
+    char c = mmu.read(0);
+    cout << hex << uppercase << "0x" << unsigned(c) << endl;
+    c = mmu.read(1);
+    cout << hex << uppercase << "0x" << unsigned(c) << endl;
     return 0;
 }
