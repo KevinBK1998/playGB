@@ -10,7 +10,7 @@ int main()
     Processor cpu(mmu);
     char c = cpu.read(0);
     cout << hex << uppercase << "0x" << unsigned(c) << endl;
-    c = cpu.read(1);
-    cout << hex << uppercase << "0x" << unsigned(c) << endl;
+    cpu.map(c);
+    cpu.dump();
     return 0;
 }
