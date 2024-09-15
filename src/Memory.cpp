@@ -25,7 +25,12 @@ Memory::Memory(std::string filename)
     }
 }
 
-uint8_t Memory::read(uint16_t address)
+uint8_t Memory::readByte(uint16_t address)
 {
     return rom[address];
+}
+
+uint16_t Memory::readWord(uint16_t address)
+{
+    return (readByte(address + 1) << 8) + readByte(address);
 }

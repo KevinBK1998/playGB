@@ -19,5 +19,5 @@ uint16_t Processor::getSP()
 
 uint8_t Processor::read(uint16_t address)
 {
-    return mmu->read(address);
+    return mmu->readByte(address);
 }

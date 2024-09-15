@@ -13,7 +13,8 @@ class Memory
 public:
     Memory();
     Memory(std::string filename);
-    virtual uint8_t read(uint16_t address);
+    virtual uint8_t readByte(uint16_t address);
+    virtual uint16_t readWord(uint16_t address);
 };
 
 #endif
