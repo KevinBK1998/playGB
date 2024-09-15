@@ -5,6 +5,14 @@
 
 using namespace std;
 
+Memory::Memory()
+{
+    for (int i = 0; i < 256; i++)
+    {
+        rom[i] = 0;
+    }
+}
+
 Memory::Memory(std::string filename)
 {
     ifstream fin(filename);

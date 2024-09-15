@@ -1,14 +1,16 @@
 #include <iostream>
 #include "Memory.h"
+#include "Processor.h"
 
 using namespace std;
 
 int main()
 {
-    Memory mmu("rom/bios.gb");
-    char c = mmu.read(0);
+    Memory *mmu = new Memory("rom/bios.gb");
+    Processor cpu(mmu);
+    char c = cpu.read(0);
     cout << hex << uppercase << "0x" << unsigned(c) << endl;
-    c = mmu.read(1);
+    c = cpu.read(1);
     cout << hex << uppercase << "0x" << unsigned(c) << endl;
     return 0;
 }
