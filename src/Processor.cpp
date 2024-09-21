@@ -9,8 +9,15 @@ Processor::Processor(Memory *mmu) : mmu(mmu), pc(0), sp(0) {}
 
 uint8_t Processor::getA() { return a; }
 uint8_t Processor::getF() { return f; }
+uint16_t Processor::getHL() { return (h << 8) + l; }
 uint16_t Processor::getPC() { return pc; }
 uint16_t Processor::getSP() { return sp; }
+
+void Processor::setHL(uint16_t wordValue)
+{
+    h = wordValue >> 8;
+    l = wordValue;
+}
 
 void Processor::step()
 {
@@ -23,24 +30,22 @@ void Processor::step()
 
 void Processor::map(uint8_t opcode)
 {
-    if (opcode == 0x31)
+    switch (opcode)
     {
-        logger.info(__PRETTY_FUNCTION__, "LDSP");
-        sp = mmu->readWord(pc);
-        pc += 2;
-        logger.logWord(__PRETTY_FUNCTION__, "PC", pc);
-        logger.logWord(__PRETTY_FUNCTION__, "SP", sp);
-    }
-    else if (opcode == 0xAF)
-    {
-        logger.info(__PRETTY_FUNCTION__, "XOR A");
-        a = 0;
-        f = 0x80;
-        logger.logByte(__PRETTY_FUNCTION__, "A", a);
-        logger.logByte(__PRETTY_FUNCTION__, "F", f);
-    }
-    else
-    {
+    case 0x21:
+        ld_hl_nn();
+        break;
+    case 0x31:
+        ld_sp_nn();
+        break;
+    case 0x32:
+        ldd_HL_a();
+        break;
+    case 0xAF:
+        xor_a();
+        break;
+
+    default:
         logger.error(__PRETTY_FUNCTION__, "UNKNOWN");
         exit(-1);
     }
@@ -58,4 +63,42 @@ void Processor::dump()
 uint8_t Processor::read(uint16_t address)
 {
     return mmu->readByte(address);
+}
+
+// 0x21
+void Processor::ld_hl_nn()
+{
+    logger.info(__PRETTY_FUNCTION__, "LDHL");
+    setHL(mmu->readWord(pc));
+    pc += 2;
+    logger.logWord(__PRETTY_FUNCTION__, "PC", pc);
+    logger.logWord(__PRETTY_FUNCTION__, "HL", getHL());
+}
+
+// 0x31
+void Processor::ld_sp_nn()
+{
+    logger.info(__PRETTY_FUNCTION__, "LDSP");
+    sp = mmu->readWord(pc);
+    pc += 2;
+    logger.logWord(__PRETTY_FUNCTION__, "PC", pc);
+    logger.logWord(__PRETTY_FUNCTION__, "SP", sp);
+}
+
+void Processor::ldd_HL_a()
+{
+    logger.info(__PRETTY_FUNCTION__, "LDD[HL], A");
+    mmu->writeByte(getHL(), a);
+    setHL(getHL() - 1);
+    logger.logWord(__PRETTY_FUNCTION__, "PC", pc);
+    logger.logWord(__PRETTY_FUNCTION__, "HL", getHL());
+}
+
+void Processor::xor_a()
+{
+    logger.info(__PRETTY_FUNCTION__, "XOR A");
+    a = 0;
+    f = 0x80;
+    logger.logByte(__PRETTY_FUNCTION__, "A", a);
+    logger.logByte(__PRETTY_FUNCTION__, "F", f);
 }

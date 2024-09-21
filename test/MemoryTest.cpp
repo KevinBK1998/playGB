@@ -28,3 +28,10 @@ TEST(MemoryTest, testFileReadWordWorks)
     Memory mmu = Memory("../test/test.bin");
     ASSERT_EQ(mmu.readWord(1), 0xFFFE);
 }
+
+TEST(MemoryTest, writeByteVramWorks)
+{
+    Memory mmu;
+    mmu.writeByte(0x9fff, 0);
+    ASSERT_EQ(mmu.readByte(0x9fff), 0);
+}

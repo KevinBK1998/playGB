@@ -10,7 +10,7 @@ int main()
     logger.info(__PRETTY_FUNCTION__, "START");
     Memory *mmu = new Memory("rom/bios.gb");
     Processor cpu(mmu);
-    while (0 < 1)
+    while (cpu.getPC() < 10)
     {
         cpu.step();
     }
