@@ -3,12 +3,14 @@
 class Processor
 {
     Memory *mmu;
-    uint16_t pc;
-    uint16_t sp;
+    uint8_t a, f;
+    uint16_t pc, sp;
 
 public:
     Processor();
     Processor(Memory *mmu);
+    uint8_t getA();
+    uint8_t getF();
     uint16_t getPC();
     uint16_t getSP();
     void map(uint8_t opcode);

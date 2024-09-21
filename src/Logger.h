@@ -22,14 +22,14 @@ const LogLevel LOG_LEVEL = DEBUG;
 
 class Logger
 {
-    ofstream logFile;
+    ofstream *logFile;
     string context;
     string levelToString(LogLevel level);
+    void log(LogLevel level, const string &context, const string &message);
 
 public:
     Logger();
     ~Logger();
-    void log(LogLevel level, const string &context, const string &message);
     void debug(const string &context, const string &message);
     void info(const string &context, const string &message);
     void warn(const string &context, const string &message);

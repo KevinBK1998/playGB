@@ -23,14 +23,18 @@ string Logger::levelToString(LogLevel level)
 
 Logger::Logger()
 {
-    logFile.open(LOG_FILE, ios::app);
-    if (!logFile.is_open())
+    logFile = new ofstream(LOG_FILE, ios::app);
+    if (!logFile->is_open())
     {
         cerr << "Error opening log file." << endl;
     }
 }
 
-Logger::~Logger() { logFile.close(); }
+Logger::~Logger()
+{
+    logFile->close();
+    free(logFile);
+}
 
 void Logger::log(LogLevel level, const string &context, const string &message)
 {
@@ -54,10 +58,10 @@ void Logger::log(LogLevel level, const string &context, const string &message)
     cout << logEntry.str();
 
     // Output to log file
-    if (logFile.is_open())
+    if (logFile->is_open())
     {
-        logFile << logEntry.str();
-        logFile.flush(); // Ensure immediate write to file
+        (*logFile) << logEntry.str();
+        logFile->flush(); // Ensure immediate write to file
     }
 }
 

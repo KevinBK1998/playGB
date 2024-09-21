@@ -20,15 +20,10 @@ TEST(ProcessorTest, testMemoryReadCalled)
     ASSERT_EQ(cpu.read(1), 0xFE);
 }
 
-TEST(ProcessorTest, pcShouldBeZeroOnStart)
+TEST(ProcessorTest, registerShouldBeZeroOnStart)
 {
     Processor cpu;
     ASSERT_EQ(cpu.getPC(), 0);
-}
-
-TEST(ProcessorTest, spShouldBeZeroOnStart)
-{
-    Processor cpu;
     ASSERT_EQ(cpu.getSP(), 0);
 }
 
@@ -52,4 +47,14 @@ TEST(ProcessorTest, loadSPFromPC)
 
     ASSERT_EQ(cpu.getSP(), 0xFFFE);
     ASSERT_EQ(cpu.getPC(), 3);
+}
+
+TEST(ProcessorTest, xorA)
+{
+    Processor cpu = Processor();
+    cpu.map(0xAF);
+    ASSERT_EQ(cpu.getSP(), 0);
+    ASSERT_EQ(cpu.getPC(), 1);
+    ASSERT_EQ(cpu.getA(), 0);
+    ASSERT_EQ(cpu.getF(), 0x80);
 }
