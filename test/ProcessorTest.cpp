@@ -27,34 +27,41 @@ TEST(ProcessorTest, registerShouldBeZeroOnStart)
     ASSERT_EQ(cpu.getSP(), 0);
 }
 
+TEST(ProcessorTest, stepShouldincreasePC)
+{
+    Processor cpu;
+    cpu.step();
+    ASSERT_EQ(cpu.getPC(), 1);
+    ASSERT_EQ(cpu.getSP(), 0);
+}
+
 TEST(ProcessorTest, testNopWorks)
 {
     Processor cpu;
     cpu.map(0);
     ASSERT_EQ(cpu.getSP(), 0);
-    ASSERT_EQ(cpu.getPC(), 1);
+    ASSERT_EQ(cpu.getPC(), 0);
 }
 
 TEST(ProcessorTest, loadSPFromPC)
 {
     MockMemory mmu;
     Processor cpu = Processor(&mmu);
-    EXPECT_CALL(mmu, readWord(1))
+    EXPECT_CALL(mmu, readWord(0))
         .Times(1)
         .WillOnce(Return(0xFFFE));
 
     cpu.map(0x31);
 
     ASSERT_EQ(cpu.getSP(), 0xFFFE);
-    ASSERT_EQ(cpu.getPC(), 3);
+    ASSERT_EQ(cpu.getPC(), 2);
 }
 
 TEST(ProcessorTest, xorA)
 {
     Processor cpu = Processor();
     cpu.map(0xAF);
-    ASSERT_EQ(cpu.getSP(), 0);
-    ASSERT_EQ(cpu.getPC(), 1);
     ASSERT_EQ(cpu.getA(), 0);
     ASSERT_EQ(cpu.getF(), 0x80);
+    ASSERT_EQ(cpu.getPC(), 0);
 }

@@ -13,6 +13,7 @@ public:
     uint8_t getF();
     uint16_t getPC();
     uint16_t getSP();
+    void step();
     void map(uint8_t opcode);
     void dump();
     uint8_t read(uint16_t address);
