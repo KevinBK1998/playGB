@@ -3,3 +3,4 @@ rom
 .vscode
 build-test
 a.out
+console.log

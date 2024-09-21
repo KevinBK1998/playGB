@@ -18,11 +18,12 @@ Memory::Memory(std::string filename)
     ifstream fin(filename);
     char c;
     int i = 0;
-    while (fin)
+    while (i < 256 && fin)
     {
         fin.get(c);
         rom[i++] = c;
     }
+    fin.close();
 }
 
 uint8_t Memory::readByte(uint16_t address)

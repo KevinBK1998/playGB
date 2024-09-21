@@ -6,6 +6,7 @@ build: $(EXECUTABLE)
 
 clean:
 	rm -f $(EXECUTABLE)
+	rm -f console.log
 
 run: $(EXECUTABLE)
 	./$(EXECUTABLE)

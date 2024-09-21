@@ -1,10 +1,8 @@
 #include <string>
 #include <stdint.h>
 
-#ifndef MEM_h
-#define MEM_h
-
-int load(std::string filename);
+#ifndef MEM_H
+#define MEM_H
 
 class Memory
 {
