@@ -45,7 +45,7 @@ TEST(ProcessorTest, testNopWorks)
     ASSERT_EQ(cpu.getPC(), 0);
 }
 
-TEST(ProcessorTest, loadSPFromPC)
+TEST(ProcessorTest, loadSPFromImm)
 {
     MockMemory mmu;
     Processor cpu = Processor(&mmu);
@@ -59,7 +59,7 @@ TEST(ProcessorTest, loadSPFromPC)
     ASSERT_EQ(cpu.getPC(), 2);
 }
 
-TEST(ProcessorTest, loadHLFromPC)
+TEST(ProcessorTest, loadHLFromImm)
 {
     MockMemory mmu;
     Processor cpu = Processor(&mmu);
@@ -112,6 +112,34 @@ TEST(ProcessorTest, jumpRelative)
     cpu.step();
 
     ASSERT_EQ(cpu.getPC(), 7);
+}
+
+TEST(ProcessorTest, loadAFromImm)
+{
+    MockMemory mmu;
+    Processor cpu = Processor(&mmu);
+    EXPECT_CALL(mmu, readByte(0))
+        .Times(1)
+        .WillOnce(Return(0x80));
+
+    cpu.map(0x3E);
+
+    ASSERT_EQ(cpu.getA(), 0x80);
+    ASSERT_EQ(cpu.getPC(), 1);
+}
+
+TEST(ProcessorTest, loadCFromImm)
+{
+    MockMemory mmu;
+    Processor cpu = Processor(&mmu);
+    EXPECT_CALL(mmu, readByte(0))
+        .Times(1)
+        .WillOnce(Return(0x11));
+
+    cpu.map(0xE);
+
+    ASSERT_EQ(cpu.getC(), 0x11);
+    ASSERT_EQ(cpu.getPC(), 1);
 }
 
 TEST(ProcessorTest, prefixOpcodesIncreasePC)

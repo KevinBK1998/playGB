@@ -8,6 +8,7 @@ Processor::Processor() : mmu(new Memory()), pc(0), sp(0) {}
 Processor::Processor(Memory *mmu) : mmu(mmu), pc(0), sp(0) {}
 
 uint8_t Processor::getA() { return a; }
+uint8_t Processor::getC() { return c; }
 uint8_t Processor::getF() { return f; }
 uint16_t Processor::getHL() { return (h << 8) + l; }
 uint16_t Processor::getPC() { return pc; }
@@ -34,7 +35,7 @@ void Processor::dump()
 {
     ostringstream messageStream;
     messageStream << "CPU Registers" << hex << showbase << endl;
-    messageStream << "\tA = " << unsigned(a) << ", F = " << unsigned(f) << endl;
+    messageStream << "\tA = " << unsigned(a) << ", C = " << unsigned(c) << ", F = " << unsigned(f) << endl;
     messageStream << "\tFLAGS: " << ((f & 0x80) != 0 ? "z" : "-") << ((f & 0x40) != 0 ? "n" : "-") << ((f & 0x20) != 0 ? "h" : "-") << ((f & 0x10) != 0 ? "c" : "-") << endl;
     messageStream << "\tPC = " << pc << ", SP = " << sp << ", HL = " << getHL();
     logger.debug(__PRETTY_FUNCTION__, messageStream.str());
@@ -44,6 +45,9 @@ void Processor::map(uint8_t opcode)
 {
     switch (opcode)
     {
+    case 0xE:
+        ld_c_n();
+        break;
     case 0x20:
         jr_nz_n();
         break;
@@ -55,6 +59,9 @@ void Processor::map(uint8_t opcode)
         break;
     case 0x32:
         ldd_HL_a();
+        break;
+    case 0x3E:
+        ld_a_n();
         break;
     case 0xAF:
         xor_a();
@@ -68,6 +75,14 @@ void Processor::map(uint8_t opcode)
         dump();
         exit(-1);
     }
+}
+
+// 0x0E
+void Processor::ld_c_n()
+{
+    logger.info(__PRETTY_FUNCTION__, "LD C, N");
+    c = mmu->readByte(pc++);
+    logger.logByte(__PRETTY_FUNCTION__, "C", c);
 }
 
 // 0x2*
@@ -110,6 +125,14 @@ void Processor::ldd_HL_a()
     logger.logWord(__PRETTY_FUNCTION__, "HL", getHL());
 }
 
+void Processor::ld_a_n()
+{
+    logger.info(__PRETTY_FUNCTION__, "LD A, N");
+    a = mmu->readByte(pc++);
+    logger.logByte(__PRETTY_FUNCTION__, "A", a);
+}
+
+// 0xAF
 void Processor::xor_a()
 {
     logger.info(__PRETTY_FUNCTION__, "XOR A");
@@ -133,6 +156,7 @@ void Processor::prefixMap(uint8_t opcode)
     }
 }
 
+// 0xCB 0x7C
 void Processor::bit_h(int n)
 {
     ostringstream messageStream;
