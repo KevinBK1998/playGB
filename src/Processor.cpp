@@ -65,6 +65,7 @@ void Processor::map(uint8_t opcode)
 
     default:
         logger.error(__PRETTY_FUNCTION__, "UNKNOWN OPCODE");
+        dump();
         exit(-1);
     }
 }

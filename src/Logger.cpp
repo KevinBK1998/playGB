@@ -36,9 +36,11 @@ Logger::~Logger()
     free(logFile);
 }
 
+void Logger::setLogLevel(LogLevel level) { minLogLevel = level; }
+
 void Logger::log(LogLevel level, const string &context, const string &message)
 {
-    if (level < LOG_LEVEL)
+    if (level < minLogLevel)
         return;
     // Get current timestamp
     time_t now = time(0);

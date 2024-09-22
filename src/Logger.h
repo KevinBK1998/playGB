@@ -18,7 +18,7 @@ enum LogLevel
 };
 
 const string LOG_FILE = "console.log";
-const LogLevel LOG_LEVEL = INFO;
+static LogLevel minLogLevel = WARNING;
 
 class Logger
 {
@@ -30,6 +30,7 @@ class Logger
 public:
     Logger();
     ~Logger();
+    void setLogLevel(LogLevel level);
     void debug(const string &context, const string &message);
     void info(const string &context, const string &message);
     void warn(const string &context, const string &message);
