@@ -18,7 +18,7 @@ enum LogLevel
 };
 
 const string LOG_FILE = "console.log";
-const LogLevel LOG_LEVEL = DEBUG;
+const LogLevel LOG_LEVEL = INFO;
 
 class Logger
 {

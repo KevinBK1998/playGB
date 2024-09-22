@@ -5,21 +5,6 @@
 
 using ::testing::Return;
 
-TEST(ProcessorTest, testMemoryReadCalled)
-{
-    MockMemory mmu;
-    Processor cpu = Processor(&mmu);
-    EXPECT_CALL(mmu, readByte(0))
-        .Times(1)
-        .WillOnce(Return(0x31));
-    EXPECT_CALL(mmu, readByte(1))
-        .Times(1)
-        .WillOnce(Return(0xFE));
-
-    ASSERT_EQ(cpu.read(0), 0x31);
-    ASSERT_EQ(cpu.read(1), 0xFE);
-}
-
 TEST(ProcessorTest, registerShouldBeZeroOnStart)
 {
     Processor cpu;
@@ -33,6 +18,23 @@ TEST(ProcessorTest, stepShouldincreasePC)
     cpu.step();
     ASSERT_EQ(cpu.getPC(), 1);
     ASSERT_EQ(cpu.getSP(), 0);
+}
+
+TEST(ProcessorTest, stepShouldCallMemoryRead)
+{
+    MockMemory mmu;
+    Processor cpu = Processor(&mmu);
+    EXPECT_CALL(mmu, readByte(0))
+        .Times(1)
+        .WillOnce(Return(0x31));
+    EXPECT_CALL(mmu, readWord(1))
+        .Times(1)
+        .WillOnce(Return(0xFFFE));
+
+    cpu.step();
+
+    ASSERT_EQ(cpu.getPC(), 3);
+    ASSERT_EQ(cpu.getSP(), 0xFFFE);
 }
 
 TEST(ProcessorTest, testNopWorks)
@@ -91,7 +93,42 @@ TEST(ProcessorTest, loadDataAtHLFromA)
 
     cpu.map(0x32);
 
-    ASSERT_EQ(cpu.read(1), 0);
     ASSERT_EQ(cpu.getHL(), 0);
     ASSERT_EQ(cpu.getPC(), 0);
+}
+
+TEST(ProcessorTest, prefixOpcodesIncreasePC)
+{
+    MockMemory mmu;
+    Processor cpu = Processor(&mmu);
+    EXPECT_CALL(mmu, readByte(0))
+        .Times(1)
+        .WillOnce(Return(0xCB));
+    EXPECT_CALL(mmu, readByte(1))
+        .Times(1)
+        .WillOnce(Return(0x7C));
+
+    cpu.step();
+
+    ASSERT_EQ(cpu.getPC(), 2);
+    ASSERT_EQ(cpu.getSP(), 0);
+}
+
+TEST(ProcessorTest, prefixBitCheck)
+{
+    Processor cpu;
+    cpu.map(0xAF);
+    cpu.setHL(0xFFFF);
+
+    cpu.prefixMap(0x7C);
+    ASSERT_EQ(cpu.getPC(), 0);
+    ASSERT_EQ(cpu.getHL(), 0xFFFF);
+    ASSERT_EQ(cpu.getF(), 0x20);
+
+    cpu.setHL(0);
+
+    cpu.prefixMap(0x7C);
+    ASSERT_EQ(cpu.getPC(), 0);
+    ASSERT_EQ(cpu.getHL(), 0);
+    ASSERT_EQ(cpu.getF(), 0xA0);
 }

@@ -14,6 +14,10 @@ class Processor
     // 0xAF
     void xor_a();
 
+    // Prefix Opcodes
+    //  0x7C
+    void bit_h(int n);
+
 public:
     Processor();
     Processor(Memory *mmu);
@@ -25,6 +29,6 @@ public:
     uint16_t getSP();
     void step();
     void map(uint8_t opcode);
+    void prefixMap(uint8_t opcode);
     void dump();
-    uint8_t read(uint16_t address);
 };

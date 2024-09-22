@@ -28,6 +28,16 @@ void Processor::step()
     map(opcode);
 }
 
+void Processor::dump()
+{
+    ostringstream messageStream;
+    messageStream << "CPU Registers" << hex << showbase << endl;
+    messageStream << "\tA = " << unsigned(a) << ", F = " << unsigned(f) << endl;
+    messageStream << "\tFLAGS: " << ((f & 0x80) != 0 ? "z" : "-") << ((f & 0x40) != 0 ? "n" : "-") << ((f & 0x20) != 0 ? "h" : "-") << ((f & 0x10) != 0 ? "c" : "-") << endl;
+    messageStream << "\tPC = " << pc << ", SP = " << sp << ", HL = " << getHL();
+    logger.debug(__PRETTY_FUNCTION__, messageStream.str());
+}
+
 void Processor::map(uint8_t opcode)
 {
     switch (opcode)
@@ -44,25 +54,14 @@ void Processor::map(uint8_t opcode)
     case 0xAF:
         xor_a();
         break;
+    case 0xCB:
+        prefixMap(mmu->readByte(pc++));
+        break;
 
     default:
-        logger.error(__PRETTY_FUNCTION__, "UNKNOWN");
+        logger.error(__PRETTY_FUNCTION__, "UNKNOWN OPCODE");
         exit(-1);
     }
-}
-
-void Processor::dump()
-{
-    ostringstream messageStream;
-    messageStream << "CPU Registers" << hex << showbase << endl;
-    messageStream << "\tA = " << unsigned(a) << ", F = " << unsigned(f) << endl;
-    messageStream << "\tPC = " << pc << ", SP = " << sp;
-    logger.debug(__PRETTY_FUNCTION__, messageStream.str());
-}
-
-uint8_t Processor::read(uint16_t address)
-{
-    return mmu->readByte(address);
 }
 
 // 0x21
@@ -101,4 +100,31 @@ void Processor::xor_a()
     f = 0x80;
     logger.logByte(__PRETTY_FUNCTION__, "A", a);
     logger.logByte(__PRETTY_FUNCTION__, "F", f);
+}
+
+void Processor::prefixMap(uint8_t opcode)
+{
+    switch (opcode)
+    {
+    case 0x7C:
+        bit_h(7);
+        break;
+
+    default:
+        logger.error(__PRETTY_FUNCTION__, "UNKNOWN PREFIX OPCODE");
+        exit(-1);
+    }
+}
+
+void Processor::bit_h(int n)
+{
+    ostringstream messageStream;
+    messageStream << "BIT " << n << ", H";
+    logger.info(__PRETTY_FUNCTION__, messageStream.str());
+    f &= 0x10;
+    f |= 0x20;
+    if (!((h >> n) & 1))
+        f |= 0x80;
+    logger.logWord(__PRETTY_FUNCTION__, "PC", pc);
+    logger.logByte(__PRETTY_FUNCTION__, "H", h);
 }
