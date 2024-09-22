@@ -1,19 +1,23 @@
 EXECUTABLE = a.out
 
-.PHONY: build run test
+.PHONY: build clean run test
+
+build: $(EXECUTABLE)
+
+clean:
+	rm -f $(EXECUTABLE)
+	rm -f console.log
 
 run: $(EXECUTABLE)
 	./$(EXECUTABLE)
 
-build: $(EXECUTABLE)
+$(EXECUTABLE): src/*.cpp
+	g++ $^ -o $@
 
-$(EXECUTABLE): src/main.cpp src/myFunctions.cpp
-	g++ src/main.cpp src/myFunctions.cpp -o $@
-
-build-test: $(EXECUTABLE) CMakeLists.txt
+build-test: $(EXECUTABLE) test/*.cpp CMakeLists.txt
 	cmake -S . -B cmake-build
 	cmake --build cmake-build
 	touch $@
 
 test: build-test
-	ctest --test-dir cmake-build
+	ctest --test-dir cmake-build --output-on-failure
