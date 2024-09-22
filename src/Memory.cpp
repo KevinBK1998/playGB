@@ -33,6 +33,7 @@ uint8_t Memory::readByte(uint16_t address)
     {
     case 0:
         return rom[address];
+    case 8:
     case 9:
         return vram[address & 0x1FFF];
     default:
@@ -48,6 +49,7 @@ void Memory::writeByte(uint16_t address, uint8_t byteValue)
     case 0:
         rom[address] = byteValue;
         break;
+    case 8:
     case 9:
         vram[address & 0x1FFF] = byteValue;
         break;

@@ -34,4 +34,6 @@ TEST(MemoryTest, writeByteVramWorks)
     Memory mmu;
     mmu.writeByte(0x9fff, 0);
     ASSERT_EQ(mmu.readByte(0x9fff), 0);
+    mmu.writeByte(0x8fff, 0);
+    ASSERT_EQ(mmu.readByte(0x8fff), 0);
 }

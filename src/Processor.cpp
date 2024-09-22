@@ -19,6 +19,8 @@ void Processor::setHL(uint16_t wordValue)
     l = wordValue;
 }
 
+void Processor::setPC(uint16_t wordValue) { pc = wordValue; }
+
 void Processor::step()
 {
     uint8_t opcode = mmu->readByte(pc);
@@ -42,6 +44,9 @@ void Processor::map(uint8_t opcode)
 {
     switch (opcode)
     {
+    case 0x20:
+        jr_nz_n();
+        break;
     case 0x21:
         ld_hl_nn();
         break;
@@ -64,7 +69,18 @@ void Processor::map(uint8_t opcode)
     }
 }
 
-// 0x21
+// 0x2*
+void Processor::jr_nz_n()
+{
+    ostringstream messageStream;
+    int8_t n = mmu->readByte(pc++);
+    messageStream << "JR NZ, " << (int)n;
+    logger.info(__PRETTY_FUNCTION__, messageStream.str());
+    if (!(f & 0x80))
+        pc += n;
+    logger.logWord(__PRETTY_FUNCTION__, "PC", pc);
+}
+
 void Processor::ld_hl_nn()
 {
     logger.info(__PRETTY_FUNCTION__, "LDHL");
@@ -127,4 +143,5 @@ void Processor::bit_h(int n)
         f |= 0x80;
     logger.logWord(__PRETTY_FUNCTION__, "PC", pc);
     logger.logByte(__PRETTY_FUNCTION__, "H", h);
+    logger.logByte(__PRETTY_FUNCTION__, "F", f);
 }

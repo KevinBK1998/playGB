@@ -97,6 +97,23 @@ TEST(ProcessorTest, loadDataAtHLFromA)
     ASSERT_EQ(cpu.getPC(), 0);
 }
 
+TEST(ProcessorTest, jumpRelative)
+{
+    MockMemory mmu;
+    Processor cpu = Processor(&mmu);
+    cpu.setPC(0xA);
+    EXPECT_CALL(mmu, readByte(0xA))
+        .Times(1)
+        .WillOnce(Return(0x20));
+    EXPECT_CALL(mmu, readByte(0xB))
+        .Times(1)
+        .WillOnce(Return(0xFB));
+
+    cpu.step();
+
+    ASSERT_EQ(cpu.getPC(), 7);
+}
+
 TEST(ProcessorTest, prefixOpcodesIncreasePC)
 {
     MockMemory mmu;

@@ -6,7 +6,8 @@ class Processor
     uint8_t a, f;
     uint8_t h, l;
     uint16_t pc, sp;
-    // 0x21
+    // 0x2*
+    void jr_nz_n();
     void ld_hl_nn();
     // 0x31
     void ld_sp_nn();
@@ -26,6 +27,7 @@ public:
     uint16_t getHL();
     void setHL(uint16_t wordValue);
     uint16_t getPC();
+    void setPC(uint16_t wordValue);
     uint16_t getSP();
     void step();
     void map(uint8_t opcode);
