@@ -1,5 +1,7 @@
 #include <string>
 #include <stdint.h>
+#include "Graphics.h"
+#include "Audio.h"
 
 #ifndef MEM_H
 #define MEM_H
@@ -7,7 +9,8 @@
 class Memory
 {
     uint8_t rom[256];
-    uint8_t vram[8192];
+    Graphics gpu;
+    Audio apu;
 
 public:
     Memory();

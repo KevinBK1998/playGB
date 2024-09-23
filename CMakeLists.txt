@@ -14,8 +14,8 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-add_executable(MemoryTest test/MemoryTest.cpp src/Memory.cpp src/Logger.cpp)
-add_executable(ProcessorTest test/ProcessorTest.cpp src/Processor.cpp src/Memory.cpp src/Logger.cpp)
+add_executable(MemoryTest test/MemoryTest.cpp src/Memory.cpp src/Graphics.cpp src/Audio.cpp src/Logger.cpp)
+add_executable(ProcessorTest test/ProcessorTest.cpp src/Processor.cpp src/Memory.cpp src/Graphics.cpp src/Audio.cpp src/Logger.cpp)
 
 target_link_libraries(MemoryTest GTest::gtest_main)
 target_link_libraries(ProcessorTest GTest::gtest_main GTest::gmock)
