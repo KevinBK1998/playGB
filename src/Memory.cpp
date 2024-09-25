@@ -17,7 +17,7 @@ Memory::Memory()
 Memory::Memory(Graphics *gpu) : gpu(gpu) {}
 Memory::Memory(Audio *apu) : apu(apu) {}
 
-Memory::Memory(std::string filename)
+Memory::Memory(std::string filename) : gpu(new Graphics()), apu(new Audio())
 {
     ifstream fin(filename);
     char c;
@@ -28,6 +28,16 @@ Memory::Memory(std::string filename)
         rom[i++] = c;
     }
     fin.close();
+}
+
+void Memory::dump()
+{
+    ofstream dumpFile("dump.bin", ios::binary);
+    int i = 0;
+    while (i < 0x10000)
+    {
+        dumpFile << readByte(i++);
+    }
 }
 
 uint8_t Memory::readByte(uint16_t address)

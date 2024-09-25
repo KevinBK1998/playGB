@@ -11,16 +11,16 @@ int main()
     logger.info(__PRETTY_FUNCTION__, "START");
     Memory *mmu = new Memory("rom/bios.gb");
     Processor cpu(mmu);
+
     while (cpu.getPC() < 30)
     {
         if (cpu.getPC() == BREAK_POINT)
         {
             logger.setLogLevel(DEBUG);
-            logger.info(__PRETTY_FUNCTION__, "START");
+            logger.info(__PRETTY_FUNCTION__, "BRKP");
         }
         cpu.step();
     }
-    cpu.dump();
-    free(mmu);
+
     return 0;
 }

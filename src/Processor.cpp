@@ -33,6 +33,7 @@ void Processor::step()
 
 void Processor::dump()
 {
+    mmu->dump();
     ostringstream messageStream;
     messageStream << "CPU Registers" << hex << showbase << endl;
     messageStream << "\tA = " << unsigned(a) << ", C = " << unsigned(c) << ", F = " << unsigned(f) << endl;
@@ -69,10 +70,14 @@ void Processor::map(uint8_t opcode)
     case 0xCB:
         prefixMap(mmu->readByte(pc++));
         break;
+    case 0xE2:
+        ld_HC_a();
+        break;
 
     default:
-        logger.error(__PRETTY_FUNCTION__, "UNKNOWN OPCODE");
         dump();
+        logger.error(__PRETTY_FUNCTION__, "UNKNOWN OPCODE");
+        logger.logByte(__PRETTY_FUNCTION__, "OpCode", opcode);
         exit(-1);
     }
 }
@@ -142,6 +147,15 @@ void Processor::xor_a()
     logger.logByte(__PRETTY_FUNCTION__, "F", f);
 }
 
+// 0xE2
+void Processor::ld_HC_a()
+{
+    logger.info(__PRETTY_FUNCTION__, "LD [HC], A");
+    logger.logByte(__PRETTY_FUNCTION__, "A", a);
+    logger.logByte(__PRETTY_FUNCTION__, "C", f);
+    mmu->writeByte(0xFF00 + c, a);
+}
+
 void Processor::prefixMap(uint8_t opcode)
 {
     switch (opcode)
@@ -151,6 +165,7 @@ void Processor::prefixMap(uint8_t opcode)
         break;
 
     default:
+        dump();
         logger.error(__PRETTY_FUNCTION__, "UNKNOWN PREFIX OPCODE");
         exit(-1);
     }

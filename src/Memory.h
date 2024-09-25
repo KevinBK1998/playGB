@@ -17,6 +17,7 @@ public:
     Memory(Graphics *gpu);
     Memory(Audio *apu);
     Memory(std::string filename);
+    void dump();
     virtual uint8_t readByte(uint16_t address);
     virtual uint16_t readWord(uint16_t address);
     virtual void writeByte(uint16_t address, uint8_t byteValue);

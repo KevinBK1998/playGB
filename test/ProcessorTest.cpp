@@ -142,6 +142,23 @@ TEST(ProcessorTest, loadCFromImm)
     ASSERT_EQ(cpu.getPC(), 1);
 }
 
+TEST(ProcessorTest, loadDataAtHighCFromA)
+{
+    MockMemory mmu;
+    Processor cpu = Processor(&mmu);
+    EXPECT_CALL(mmu, readByte(0))
+        .Times(1)
+        .WillOnce(Return(0x11));
+    EXPECT_CALL(mmu, writeByte(0xff11, 0))
+        .Times(1);
+
+    cpu.map(0xAF);
+    cpu.map(0xE);
+    cpu.map(0xE2);
+
+    ASSERT_EQ(cpu.getPC(), 1);
+}
+
 TEST(ProcessorTest, prefixOpcodesIncreasePC)
 {
     MockMemory mmu;

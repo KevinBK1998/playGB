@@ -3,4 +3,5 @@ rom
 .vscode
 build-test
 a.out
+dump.bin
 console.log

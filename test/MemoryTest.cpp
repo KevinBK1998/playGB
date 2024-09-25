@@ -32,7 +32,7 @@ TEST(MemoryTest, testFileReadWordWorks)
     ASSERT_EQ(mmu.readWord(1), 0xFFFE);
 }
 
-TEST(MemoryTest, writeByteVramWorks)
+TEST(MemoryTest, writeByteGpuWorks)
 {
     MockGraphics gpu;
     Memory mmu(&gpu);

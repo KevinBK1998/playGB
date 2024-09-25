@@ -6,6 +6,7 @@ class Processor
     uint8_t a, c, f;
     uint8_t h, l;
     uint16_t pc, sp;
+    void dump();
     // 0x0*
     void ld_c_n();
     // 0x2*
@@ -17,6 +18,8 @@ class Processor
     void ld_a_n();
     // 0xAF
     void xor_a();
+    // 0xE2
+    void ld_HC_a();
 
     // Prefix Opcodes
     //  0x7C
@@ -36,5 +39,4 @@ public:
     void step();
     void map(uint8_t opcode);
     void prefixMap(uint8_t opcode);
-    void dump();
 };
