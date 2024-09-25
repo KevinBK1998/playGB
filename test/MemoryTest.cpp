@@ -1,4 +1,7 @@
+#include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include "../test/MockGraphics.h"
+#include "../test/MockAudio.h"
 #include "../src/Memory.h"
 
 TEST(MemoryTest, noFileReadByteWorks)
@@ -31,16 +34,23 @@ TEST(MemoryTest, testFileReadWordWorks)
 
 TEST(MemoryTest, writeByteVramWorks)
 {
-    Memory mmu;
+    MockGraphics gpu;
+    Memory mmu(&gpu);
+    EXPECT_CALL(gpu, writeByte(0x9fff, 0))
+        .Times(1);
+    EXPECT_CALL(gpu, writeByte(0x8fff, 0))
+        .Times(1);
+
     mmu.writeByte(0x9fff, 0);
-    ASSERT_EQ(mmu.readByte(0x9fff), 0);
     mmu.writeByte(0x8fff, 0);
-    ASSERT_EQ(mmu.readByte(0x8fff), 0);
 }
 
 TEST(MemoryTest, writeByteApuWorks)
 {
-    Memory mmu;
+    MockAudio apu;
+    Memory mmu(&apu);
+    EXPECT_CALL(apu, writeByte(0xff26, 0x80))
+        .Times(1);
+
     mmu.writeByte(0xff26, 0x80);
-    ASSERT_EQ(mmu.readByte(0xff26), 0x80);
 }

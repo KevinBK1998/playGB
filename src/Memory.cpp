@@ -14,6 +14,9 @@ Memory::Memory()
     }
 }
 
+Memory::Memory(Graphics *gpu) : gpu(gpu) {}
+Memory::Memory(Audio *apu) : apu(apu) {}
+
 Memory::Memory(std::string filename)
 {
     ifstream fin(filename);
@@ -35,11 +38,11 @@ uint8_t Memory::readByte(uint16_t address)
         return rom[address];
     case 8:
     case 9:
-        return gpu.readByte(address);
+        return gpu->readByte(address);
     case 0xF:
         if (address == 0xFF26)
         {
-            return apu.readByte(address);
+            return apu->readByte(address);
         }
     default:
         logger.warn(__PRETTY_FUNCTION__, "Read Undefined Memory");
@@ -57,12 +60,12 @@ void Memory::writeByte(uint16_t address, uint8_t byteValue)
         break;
     case 8:
     case 9:
-        gpu.writeByte(address, byteValue);
+        gpu->writeByte(address, byteValue);
         break;
     case 0xF:
         if (address == 0xFF26)
         {
-            apu.writeByte(address, byteValue);
+            apu->writeByte(address, byteValue);
             break;
         }
     default:
