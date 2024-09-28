@@ -32,7 +32,12 @@ Memory::Memory(std::string filename) : gpu(new Graphics()), apu(new Audio())
 
 void Memory::dump()
 {
+    logger.setLogLevel(ERROR);
     ofstream dumpFile("dump.bin", ios::binary);
+    if (!dumpFile.is_open())
+    {
+        logger.error(__PRETTY_FUNCTION__, "Error opening dump file");
+    }
     int i = 0;
     while (i < 0x10000)
     {
@@ -42,6 +47,7 @@ void Memory::dump()
 
 uint8_t Memory::readByte(uint16_t address)
 {
+    logger.logWord(__PRETTY_FUNCTION__, "Address", address);
     switch ((address & 0xF000) >> 12)
     {
     case 0:
@@ -50,37 +56,55 @@ uint8_t Memory::readByte(uint16_t address)
     case 9:
         return gpu->readByte(address);
     case 0xF:
-        if (address == 0xFF26)
+        if ((address & 0xF00) == 0xF00)
         {
-            return apu->readByte(address);
+            switch (address & 0xF0)
+            {
+            case 0x10:
+            case 0x20:
+                return apu->readByte(address);
+
+            default:
+                logger.warn(__PRETTY_FUNCTION__, "Read Undefined 0xFFxx Memory");
+                return 0;
+            }
         }
     default:
         logger.warn(__PRETTY_FUNCTION__, "Read Undefined Memory");
-        logger.logWord(__PRETTY_FUNCTION__, "Address", address);
         return 0;
     }
 }
 
 void Memory::writeByte(uint16_t address, uint8_t byteValue)
 {
-    switch ((address & 0xF000) >> 12)
+    logger.logWord(__PRETTY_FUNCTION__, "Address", address);
+    switch (address & 0xF000)
     {
     case 0:
         rom[address] = byteValue;
         break;
-    case 8:
-    case 9:
+    case 0x8000:
+    case 0x9000:
         gpu->writeByte(address, byteValue);
         break;
-    case 0xF:
-        if (address == 0xFF26)
+    case 0xF000:
+        if ((address & 0xF00) == 0xF00)
         {
-            apu->writeByte(address, byteValue);
-            break;
+            switch (address & 0xF0)
+            {
+            case 0x10:
+            case 0x20:
+                apu->writeByte(address, byteValue);
+                break;
+
+            default:
+                logger.error(__PRETTY_FUNCTION__, "Write Undefined 0xFFxx Memory");
+                exit(-2);
+            }
         }
+        break;
     default:
         logger.error(__PRETTY_FUNCTION__, "Write Undefined Memory");
-        logger.logWord(__PRETTY_FUNCTION__, "Address", address);
         exit(-2);
     }
 }

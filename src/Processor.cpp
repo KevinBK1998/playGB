@@ -39,6 +39,7 @@ void Processor::dump()
     messageStream << "\tA = " << unsigned(a) << ", C = " << unsigned(c) << ", F = " << unsigned(f) << endl;
     messageStream << "\tFLAGS: " << ((f & 0x80) != 0 ? "z" : "-") << ((f & 0x40) != 0 ? "n" : "-") << ((f & 0x20) != 0 ? "h" : "-") << ((f & 0x10) != 0 ? "c" : "-") << endl;
     messageStream << "\tPC = " << pc << ", SP = " << sp << ", HL = " << getHL();
+    logger.setLogLevel(DEBUG);
     logger.debug(__PRETTY_FUNCTION__, messageStream.str());
 }
 

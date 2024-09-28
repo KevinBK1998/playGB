@@ -51,6 +51,9 @@ TEST(MemoryTest, writeByteApuWorks)
     Memory mmu(&apu);
     EXPECT_CALL(apu, writeByte(0xff26, 0x80))
         .Times(1);
+    EXPECT_CALL(apu, writeByte(0xff11, 0x80))
+        .Times(1);
 
     mmu.writeByte(0xff26, 0x80);
+    mmu.writeByte(0xff11, 0x80);
 }
