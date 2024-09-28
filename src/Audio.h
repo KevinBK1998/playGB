@@ -7,7 +7,7 @@
 class Audio
 {
     uint8_t square1[5];
-    uint8_t stat;
+    uint8_t enable, stat;
 
 public:
     Audio();

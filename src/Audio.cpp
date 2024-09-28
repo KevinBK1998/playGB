@@ -15,6 +15,8 @@ uint8_t Audio::readByte(uint16_t address)
         return square1[address & 0xF];
     switch (address & 0xFF)
     {
+    case 0x25:
+        return enable;
     case 0x26:
         return stat;
     default:
@@ -32,6 +34,9 @@ void Audio::writeByte(uint16_t address, uint8_t byteValue)
     }
     switch (address & 0xFF)
     {
+    case 0x25:
+        enable = byteValue;
+        break;
     case 0x26:
         stat = byteValue;
         break;

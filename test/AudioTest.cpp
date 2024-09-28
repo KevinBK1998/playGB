@@ -22,3 +22,10 @@ TEST(AudioTest, writeStat)
     apu.writeByte(0xff26, 0x80);
     ASSERT_EQ(apu.readByte(0xff26), 0x80);
 }
+
+TEST(AudioTest, writeEnable)
+{
+    Audio apu;
+    apu.writeByte(0xff25, 0x80);
+    ASSERT_EQ(apu.readByte(0xff25), 0x80);
+}
