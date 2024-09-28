@@ -11,10 +11,10 @@ Audio::Audio() {}
 uint8_t Audio::readByte(uint16_t address)
 {
     logger.logWord(__PRETTY_FUNCTION__, "Address", address);
+    if (address <= 0xFF14)
+        return square1[address & 0xF];
     switch (address & 0xFF)
     {
-    case 0x11:
-        return square1[1];
     case 0x26:
         return stat;
     default:
@@ -25,11 +25,13 @@ uint8_t Audio::readByte(uint16_t address)
 void Audio::writeByte(uint16_t address, uint8_t byteValue)
 {
     logger.logWord(__PRETTY_FUNCTION__, "Address", address);
+    if (address <= 0xFF14)
+    {
+        square1[address & 0xF] = byteValue;
+        return;
+    }
     switch (address & 0xFF)
     {
-    case 0x11:
-        square1[1] = byteValue;
-        break;
     case 0x26:
         stat = byteValue;
         break;

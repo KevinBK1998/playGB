@@ -7,7 +7,8 @@ class Processor
     uint8_t h, l;
     uint16_t pc, sp;
     void dump();
-    // 0x0*
+    // 0x0C
+    void inc_c();
     void ld_c_n();
     // 0x2*
     void jr_nz_n();

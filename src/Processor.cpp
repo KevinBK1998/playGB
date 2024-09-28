@@ -47,6 +47,9 @@ void Processor::map(uint8_t opcode)
 {
     switch (opcode)
     {
+    case 0xC:
+        inc_c();
+        break;
     case 0xE:
         ld_c_n();
         break;
@@ -83,7 +86,21 @@ void Processor::map(uint8_t opcode)
     }
 }
 
-// 0x0E
+// 0x0C
+void Processor::inc_c()
+{
+    logger.info(__PRETTY_FUNCTION__, "INC C");
+    uint8_t result = c + 1;
+    f &= 0x10;
+    if (!result)
+        f |= 0x80;
+    if ((c & 0xF) + 1 > 0xF)
+        f |= 0x20;
+    c = result;
+    logger.logByte(__PRETTY_FUNCTION__, "C", c);
+    logger.logByte(__PRETTY_FUNCTION__, "F", f);
+}
+
 void Processor::ld_c_n()
 {
     logger.info(__PRETTY_FUNCTION__, "LD C, N");
@@ -153,7 +170,7 @@ void Processor::ld_HC_a()
 {
     logger.info(__PRETTY_FUNCTION__, "LD [HC], A");
     logger.logByte(__PRETTY_FUNCTION__, "A", a);
-    logger.logByte(__PRETTY_FUNCTION__, "C", f);
+    logger.logByte(__PRETTY_FUNCTION__, "C", c);
     mmu->writeByte(0xFF00 + c, a);
 }
 
