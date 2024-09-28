@@ -15,10 +15,12 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 add_executable(AudioTest test/AudioTest.cpp src/Audio.cpp src/Logger.cpp)
+add_executable(GraphicsTest test/GraphicsTest.cpp src/Graphics.cpp src/Logger.cpp)
 add_executable(MemoryTest test/MemoryTest.cpp src/Memory.cpp src/Graphics.cpp src/Audio.cpp src/Logger.cpp)
 add_executable(ProcessorTest test/ProcessorTest.cpp src/Processor.cpp src/Memory.cpp src/Graphics.cpp src/Audio.cpp src/Logger.cpp)
 
 target_link_libraries(AudioTest GTest::gtest_main)
+target_link_libraries(GraphicsTest GTest::gtest_main)
 target_link_libraries(MemoryTest GTest::gtest_main GTest::gmock)
 target_link_libraries(ProcessorTest GTest::gtest_main GTest::gmock)
 
@@ -26,5 +28,6 @@ enable_testing()
 include(GoogleTest)
 
 gtest_discover_tests(AudioTest)
+gtest_discover_tests(GraphicsTest)
 gtest_discover_tests(MemoryTest)
 gtest_discover_tests(ProcessorTest)
