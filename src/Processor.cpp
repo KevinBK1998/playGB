@@ -14,6 +14,8 @@ uint16_t Processor::getHL() { return (h << 8) + l; }
 uint16_t Processor::getPC() { return pc; }
 uint16_t Processor::getSP() { return sp; }
 
+void Processor::setA(uint8_t byteValue) { a = byteValue; }
+
 void Processor::setHL(uint16_t wordValue)
 {
     h = wordValue >> 8;
@@ -67,6 +69,9 @@ void Processor::map(uint8_t opcode)
         break;
     case 0x3E:
         ld_a_n();
+        break;
+    case 0x77:
+        ld_HL_a();
         break;
     case 0xAF:
         xor_a();
@@ -153,6 +158,15 @@ void Processor::ld_a_n()
     logger.info(__PRETTY_FUNCTION__, "LD A, N");
     a = mmu->readByte(pc++);
     logger.logByte(__PRETTY_FUNCTION__, "A", a);
+}
+
+// 0x77
+void Processor::ld_HL_a()
+{
+    logger.info(__PRETTY_FUNCTION__, "LD [HL], A");
+    mmu->writeByte(getHL(), a);
+    logger.logWord(__PRETTY_FUNCTION__, "PC", pc);
+    logger.logWord(__PRETTY_FUNCTION__, "HL", getHL());
 }
 
 // 0xAF

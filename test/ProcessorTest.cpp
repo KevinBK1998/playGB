@@ -82,11 +82,11 @@ TEST(ProcessorTest, xorA)
     ASSERT_EQ(cpu.getPC(), 0);
 }
 
-TEST(ProcessorTest, loadDataAtHLFromA)
+TEST(ProcessorTest, lddAtHLFromA)
 {
     MockMemory mmu;
     Processor cpu = Processor(&mmu);
-    cpu.map(0xAF);
+    cpu.setA(0);
     cpu.setHL(1);
     EXPECT_CALL(mmu, writeByte(1, 0))
         .Times(1);
@@ -146,13 +146,13 @@ TEST(ProcessorTest, loadDataAtHighCFromA)
 {
     MockMemory mmu;
     Processor cpu = Processor(&mmu);
+    cpu.setA(0);
     EXPECT_CALL(mmu, readByte(0))
         .Times(1)
         .WillOnce(Return(0x11));
     EXPECT_CALL(mmu, writeByte(0xff11, 0))
         .Times(1);
 
-    cpu.map(0xAF);
     cpu.map(0xE);
     cpu.map(0xE2);
 
@@ -174,6 +174,21 @@ TEST(ProcessorTest, incC)
     ASSERT_EQ(cpu.getPC(), 1);
     ASSERT_EQ(cpu.getC(), 0x12);
     ASSERT_EQ(cpu.getF(), 0);
+}
+
+TEST(ProcessorTest, loadDataAtHLFromA)
+{
+    MockMemory mmu;
+    Processor cpu = Processor(&mmu);
+    cpu.setA(0x77);
+    cpu.setHL(1);
+    EXPECT_CALL(mmu, writeByte(1, 0x77))
+        .Times(1);
+
+    cpu.map(0x77);
+
+    ASSERT_EQ(cpu.getHL(), 1);
+    ASSERT_EQ(cpu.getPC(), 0);
 }
 
 // Prefix tests start here

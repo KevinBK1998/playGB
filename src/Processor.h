@@ -17,6 +17,8 @@ class Processor
     void ld_sp_nn();
     void ldd_HL_a();
     void ld_a_n();
+    // 0x77
+    void ld_HL_a();
     // 0xAF
     void xor_a();
     // 0xE2
@@ -30,6 +32,7 @@ public:
     Processor();
     Processor(Memory *mmu);
     uint8_t getA();
+    void setA(uint8_t byteValue);
     uint8_t getC();
     uint8_t getF();
     uint16_t getHL();
