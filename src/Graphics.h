@@ -7,6 +7,7 @@
 class Graphics
 {
     uint8_t vram[8192];
+    uint8_t backgroundPalette;
 
 public:
     Graphics();

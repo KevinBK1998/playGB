@@ -187,7 +187,7 @@ void Processor::ld_HN_a()
 {
     logger.info(__PRETTY_FUNCTION__, "LD [HN], A");
     uint8_t n = mmu->readByte(pc++);
-    logger.logByte(__PRETTY_FUNCTION__, "N", a);
+    logger.logByte(__PRETTY_FUNCTION__, "N", n);
     logger.logByte(__PRETTY_FUNCTION__, "A", a);
     mmu->writeByte(0xFF00 + n, a);
 }

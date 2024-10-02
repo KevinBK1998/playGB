@@ -47,7 +47,8 @@ TEST_P(GraphicsMemoryTest, writeByte)
     mmu.writeByte(GetParam(), 0x80);
 }
 
-INSTANTIATE_TEST_SUITE_P(, GraphicsMemoryTest, Range(0x8000, 0xA000, 16));
+INSTANTIATE_TEST_SUITE_P(Vram, GraphicsMemoryTest, Range(0x8000, 0xA000, 16));
+INSTANTIATE_TEST_SUITE_P(, GraphicsMemoryTest, Range(0xFF47, 0xFF48));
 
 class AudioMemoryTest : public testing::TestWithParam<int>
 {
