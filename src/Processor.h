@@ -21,7 +21,8 @@ class Processor
     void ld_HL_a();
     // 0xAF
     void xor_a();
-    // 0xE2
+    // 0xE*
+    void ld_HN_a();
     void ld_HC_a();
 
     // Prefix Opcodes

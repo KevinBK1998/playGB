@@ -79,6 +79,9 @@ void Processor::map(uint8_t opcode)
     case 0xCB:
         prefixMap(mmu->readByte(pc++));
         break;
+    case 0xE0:
+        ld_HN_a();
+        break;
     case 0xE2:
         ld_HC_a();
         break;
@@ -179,7 +182,16 @@ void Processor::xor_a()
     logger.logByte(__PRETTY_FUNCTION__, "F", f);
 }
 
-// 0xE2
+// 0xE*
+void Processor::ld_HN_a()
+{
+    logger.info(__PRETTY_FUNCTION__, "LD [HN], A");
+    uint8_t n = mmu->readByte(pc++);
+    logger.logByte(__PRETTY_FUNCTION__, "N", a);
+    logger.logByte(__PRETTY_FUNCTION__, "A", a);
+    mmu->writeByte(0xFF00 + n, a);
+}
+
 void Processor::ld_HC_a()
 {
     logger.info(__PRETTY_FUNCTION__, "LD [HC], A");
