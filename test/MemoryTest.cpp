@@ -4,6 +4,8 @@
 #include "../test/MockAudio.h"
 #include "../src/Memory.h"
 
+using ::testing::Range;
+
 TEST(MemoryTest, noFileReadByteWorks)
 {
     Memory mmu;
@@ -32,28 +34,32 @@ TEST(MemoryTest, testFileReadWordWorks)
     ASSERT_EQ(mmu.readWord(1), 0xFFFE);
 }
 
-TEST(MemoryTest, writeByteGpuWorks)
+class GraphicsMemoryTest : public testing::TestWithParam<int>
+{
+};
+
+TEST_P(GraphicsMemoryTest, writeByte)
 {
     MockGraphics gpu;
     Memory mmu(&gpu);
-    EXPECT_CALL(gpu, writeByte(0x9fff, 0))
+    EXPECT_CALL(gpu, writeByte(GetParam(), 0x80))
         .Times(1);
-    EXPECT_CALL(gpu, writeByte(0x8fff, 0))
-        .Times(1);
-
-    mmu.writeByte(0x9fff, 0);
-    mmu.writeByte(0x8fff, 0);
+    mmu.writeByte(GetParam(), 0x80);
 }
 
-TEST(MemoryTest, writeByteApuWorks)
+INSTANTIATE_TEST_SUITE_P(, GraphicsMemoryTest, Range(0x8000, 0xA000, 16));
+
+class AudioMemoryTest : public testing::TestWithParam<int>
+{
+};
+
+TEST_P(AudioMemoryTest, writeByte)
 {
     MockAudio apu;
     Memory mmu(&apu);
-    EXPECT_CALL(apu, writeByte(0xff26, 0x80))
+    EXPECT_CALL(apu, writeByte(GetParam(), 0x80))
         .Times(1);
-    EXPECT_CALL(apu, writeByte(0xff11, 0x80))
-        .Times(1);
-
-    mmu.writeByte(0xff26, 0x80);
-    mmu.writeByte(0xff11, 0x80);
+    mmu.writeByte(GetParam(), 0x80);
 }
+
+INSTANTIATE_TEST_SUITE_P(, AudioMemoryTest, Range(0xFF10, 0xFF30));

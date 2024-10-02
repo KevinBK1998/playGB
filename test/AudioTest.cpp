@@ -16,11 +16,11 @@ TEST_P(AudioTest, writeSquare1)
 
 INSTANTIATE_TEST_SUITE_P(Param, AudioTest, Range(0xFF10, 0xFF15));
 
-TEST(AudioTest, writeStat)
+TEST(AudioTest, writeVolume)
 {
     Audio apu;
-    apu.writeByte(0xff26, 0x80);
-    ASSERT_EQ(apu.readByte(0xff26), 0x80);
+    apu.writeByte(0xff24, 0x80);
+    ASSERT_EQ(apu.readByte(0xff24), 0x80);
 }
 
 TEST(AudioTest, writeEnable)
@@ -28,4 +28,11 @@ TEST(AudioTest, writeEnable)
     Audio apu;
     apu.writeByte(0xff25, 0x80);
     ASSERT_EQ(apu.readByte(0xff25), 0x80);
+}
+
+TEST(AudioTest, writeStat)
+{
+    Audio apu;
+    apu.writeByte(0xff26, 0x80);
+    ASSERT_EQ(apu.readByte(0xff26), 0x80);
 }
