@@ -9,12 +9,20 @@ Processor::Processor(Memory *mmu) : mmu(mmu), pc(0), sp(0) {}
 
 uint8_t Processor::getA() { return a; }
 uint8_t Processor::getC() { return c; }
+uint8_t Processor::getD() { return d; }
+uint8_t Processor::getE() { return e; }
 uint8_t Processor::getF() { return f; }
 uint16_t Processor::getHL() { return (h << 8) + l; }
 uint16_t Processor::getPC() { return pc; }
 uint16_t Processor::getSP() { return sp; }
 
 void Processor::setA(uint8_t byteValue) { a = byteValue; }
+
+void Processor::setDE(uint16_t wordValue)
+{
+    d = wordValue >> 8;
+    e = wordValue;
+}
 
 void Processor::setHL(uint16_t wordValue)
 {
@@ -49,11 +57,18 @@ void Processor::map(uint8_t opcode)
 {
     switch (opcode)
     {
+    case 0:
+        logger.info(__PRETTY_FUNCTION__, "NOP");
+        logger.logWord(__PRETTY_FUNCTION__, "PC", pc);
+        break;
     case 0xC:
         inc_c();
         break;
     case 0xE:
         ld_c_n();
+        break;
+    case 0x11:
+        ld_de_nn();
         break;
     case 0x20:
         jr_nz_n();
@@ -116,6 +131,18 @@ void Processor::ld_c_n()
     logger.logByte(__PRETTY_FUNCTION__, "C", c);
 }
 
+// 0x11
+void Processor::ld_de_nn()
+{
+    logger.info(__PRETTY_FUNCTION__, "LD DE, NN");
+    uint16_t nn = mmu->readWord(pc);
+    pc += 2;
+    setDE(nn);
+    logger.logByte(__PRETTY_FUNCTION__, "D", d);
+    logger.logByte(__PRETTY_FUNCTION__, "E", e);
+    logger.logWord(__PRETTY_FUNCTION__, "PC", pc);
+}
+
 // 0x2*
 void Processor::jr_nz_n()
 {
@@ -130,7 +157,7 @@ void Processor::jr_nz_n()
 
 void Processor::ld_hl_nn()
 {
-    logger.info(__PRETTY_FUNCTION__, "LDHL");
+    logger.info(__PRETTY_FUNCTION__, "LD HL, NN");
     setHL(mmu->readWord(pc));
     pc += 2;
     logger.logWord(__PRETTY_FUNCTION__, "PC", pc);
