@@ -12,6 +12,7 @@ class Processor
     void ld_c_n();
     // 0x11
     void ld_de_nn();
+    void ld_a_DE();
     // 0x2*
     void jr_nz_n();
     void ld_hl_nn();
@@ -39,6 +40,7 @@ public:
     uint8_t getC();
     uint8_t getD();
     uint8_t getE();
+    uint16_t getDE();
     void setDE(uint16_t wordValue);
     uint8_t getF();
     uint16_t getHL();

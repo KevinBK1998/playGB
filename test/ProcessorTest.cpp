@@ -217,9 +217,23 @@ TEST(ProcessorTest, load_de_From_nn)
 
     cpu.map(0x11);
 
-    ASSERT_EQ(cpu.getD(), 1);
-    ASSERT_EQ(cpu.getE(), 4);
+    ASSERT_EQ(cpu.getDE(), 0x104);
     ASSERT_EQ(cpu.getPC(), 2);
+}
+
+TEST(ProcessorTest, loadDataAtAFromDE)
+{
+    MockMemory mmu;
+    Processor cpu = Processor(&mmu);
+    cpu.setDE(0x104);
+    EXPECT_CALL(mmu, readByte(0x104))
+        .Times(1)
+        .WillOnce(Return(1));
+
+    cpu.map(0x1A);
+
+    ASSERT_EQ(cpu.getA(), 1);
+    ASSERT_EQ(cpu.getPC(), 0);
 }
 
 // Prefix tests start here

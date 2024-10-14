@@ -12,6 +12,7 @@ uint8_t Processor::getC() { return c; }
 uint8_t Processor::getD() { return d; }
 uint8_t Processor::getE() { return e; }
 uint8_t Processor::getF() { return f; }
+uint16_t Processor::getDE() { return (d << 8) + e; }
 uint16_t Processor::getHL() { return (h << 8) + l; }
 uint16_t Processor::getPC() { return pc; }
 uint16_t Processor::getSP() { return sp; }
@@ -69,6 +70,9 @@ void Processor::map(uint8_t opcode)
         break;
     case 0x11:
         ld_de_nn();
+        break;
+    case 0x1A:
+        ld_a_DE();
         break;
     case 0x20:
         jr_nz_n();
@@ -138,9 +142,16 @@ void Processor::ld_de_nn()
     uint16_t nn = mmu->readWord(pc);
     pc += 2;
     setDE(nn);
-    logger.logByte(__PRETTY_FUNCTION__, "D", d);
-    logger.logByte(__PRETTY_FUNCTION__, "E", e);
     logger.logWord(__PRETTY_FUNCTION__, "PC", pc);
+    logger.logWord(__PRETTY_FUNCTION__, "DE", getDE());
+}
+
+void Processor::ld_a_DE()
+{
+    logger.info(__PRETTY_FUNCTION__, "LD A, [DE]");
+    a = mmu->readByte(getDE());
+    logger.logWord(__PRETTY_FUNCTION__, "PC", pc);
+    logger.logByte(__PRETTY_FUNCTION__, "A", a);
 }
 
 // 0x2*
