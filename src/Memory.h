@@ -8,7 +8,7 @@
 
 class Memory
 {
-    uint8_t rom[256];
+    uint8_t rom[256], ram[128];
     Graphics *gpu;
     Audio *apu;
     uint8_t readSpecial(uint16_t address);

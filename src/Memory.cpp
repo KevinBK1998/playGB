@@ -73,7 +73,12 @@ uint8_t Memory::readByte(uint16_t address)
         return gpu->readByte(address);
     case 0xF:
         if ((address & 0xF00) == 0xF00)
-            return readSpecial(address);
+        {
+            if (address < 0xFF80)
+                return readSpecial(address);
+            else
+                return ram[address & 0x7F];
+        }
     default:
         logger.warn(__PRETTY_FUNCTION__, "Read Undefined Memory");
     }
@@ -118,7 +123,10 @@ void Memory::writeByte(uint16_t address, uint8_t byteValue)
     case 0xF:
         if ((address & 0xF00) == 0xF00)
         {
-            writeSpecial(address, byteValue);
+            if (address < 0xFF80)
+                writeSpecial(address, byteValue);
+            else
+                ram[address & 0x7F] = byteValue;
             break;
         }
     default:

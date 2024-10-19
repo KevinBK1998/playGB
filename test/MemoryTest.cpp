@@ -78,3 +78,16 @@ TEST_P(AudioMemoryTest, writeByte)
 }
 
 INSTANTIATE_TEST_SUITE_P(, AudioMemoryTest, Range(0xFF10, 0xFF30));
+
+class StackMemoryTest : public testing::TestWithParam<int>
+{
+};
+
+TEST_P(StackMemoryTest, writeByte)
+{
+    Memory mmu;
+    mmu.writeByte(GetParam(), 0x80);
+    ASSERT_EQ(mmu.readByte(GetParam()), 0x80);
+}
+
+INSTANTIATE_TEST_SUITE_P(, StackMemoryTest, Range(0xFF80, 0xFFFF));
