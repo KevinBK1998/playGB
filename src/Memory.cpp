@@ -87,7 +87,7 @@ uint8_t Memory::readByte(uint16_t address)
 
 uint16_t Memory::readWord(uint16_t address)
 {
-    return (readByte(address + 1) << 8) + readByte(address);
+    return readByte(address) + (readByte(address + 1) << 8);
 }
 
 void Memory::writeSpecial(uint16_t address, uint8_t byteValue)

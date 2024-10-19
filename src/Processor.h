@@ -20,6 +20,8 @@ class Processor
     void ld_sp_nn();
     void ldd_HL_a();
     void ld_a_n();
+    // 0x4F
+    void ld_c_a();
     // 0x77
     void ld_HL_a();
     // 0xAF

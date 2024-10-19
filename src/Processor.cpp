@@ -90,6 +90,9 @@ void Processor::map(uint8_t opcode)
     case 0x3E:
         ld_a_n();
         break;
+    case 0x4F:
+        ld_c_a();
+        break;
     case 0x77:
         ld_HL_a();
         break;
@@ -202,6 +205,15 @@ void Processor::ld_a_n()
 {
     logger.info(__PRETTY_FUNCTION__, "LD A, N");
     a = mmu->readByte(pc++);
+    logger.logByte(__PRETTY_FUNCTION__, "A", a);
+}
+
+// 0x4F
+void Processor::ld_c_a()
+{
+    logger.info(__PRETTY_FUNCTION__, "LD C, A");
+    c = a;
+    logger.logByte(__PRETTY_FUNCTION__, "C", c);
     logger.logByte(__PRETTY_FUNCTION__, "A", a);
 }
 

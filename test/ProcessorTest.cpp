@@ -254,6 +254,17 @@ TEST(ProcessorTest, callImmediate)
     ASSERT_EQ(cpu.getPC(), 0x95);
 }
 
+TEST(ProcessorTest, loadCFromA)
+{
+    Processor cpu;
+    cpu.setA(0xF);
+
+    cpu.map(0x4F);
+
+    ASSERT_EQ(cpu.getPC(), 0);
+    ASSERT_EQ(cpu.getC(), 0xF);
+}
+
 // Prefix tests start here
 
 TEST(ProcessorTest, prefixOpcodesIncreasePC)

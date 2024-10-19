@@ -12,7 +12,7 @@ int main()
     Memory *mmu = new Memory("rom/bios.gb");
     Processor cpu(mmu);
 
-    while (cpu.getPC() < 0x30)
+    while (cpu.getPC() < 0x30 || (cpu.getPC() >= 0x95 && cpu.getPC() < 0x98))
     {
         if (cpu.getPC() == BREAK_POINT)
         {
