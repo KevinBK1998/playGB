@@ -32,6 +32,7 @@ void Processor::setHL(uint16_t wordValue)
 }
 
 void Processor::setPC(uint16_t wordValue) { pc = wordValue; }
+void Processor::setSP(uint16_t wordValue) { sp = wordValue; }
 
 void Processor::step()
 {
@@ -97,6 +98,9 @@ void Processor::map(uint8_t opcode)
         break;
     case 0xCB:
         prefixMap(mmu->readByte(pc++));
+        break;
+    case 0xCD:
+        call_nn();
         break;
     case 0xE0:
         ld_HN_a();
@@ -218,6 +222,18 @@ void Processor::xor_a()
     f = 0x80;
     logger.logByte(__PRETTY_FUNCTION__, "A", a);
     logger.logByte(__PRETTY_FUNCTION__, "F", f);
+}
+
+// 0xCD
+void Processor::call_nn()
+{
+    logger.info(__PRETTY_FUNCTION__, "CALL NN");
+    sp -= 2;
+    uint16_t nn = mmu->readWord(pc);
+    mmu->writeWord(sp, pc + 2);
+    pc = nn;
+    logger.logWord(__PRETTY_FUNCTION__, "SP", sp);
+    logger.logWord(__PRETTY_FUNCTION__, "PC", pc);
 }
 
 // 0xE*

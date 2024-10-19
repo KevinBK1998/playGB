@@ -20,6 +20,20 @@ TEST(MemoryTest, noFileReadWordWorks)
     ASSERT_EQ(mmu.readWord(1), 0);
 }
 
+TEST(MemoryTest, noFileWriteByteWorks)
+{
+    Memory mmu;
+    mmu.writeByte(1, 10);
+    ASSERT_EQ(mmu.readWord(1), 10);
+}
+
+TEST(MemoryTest, noFileWriteWordWorks)
+{
+    Memory mmu;
+    mmu.writeWord(1, 0x1010);
+    ASSERT_EQ(mmu.readWord(1), 0x1010);
+}
+
 TEST(MemoryTest, testFileReadByteWorks)
 {
     Memory mmu = Memory("../test/test.bin");

@@ -126,3 +126,9 @@ void Memory::writeByte(uint16_t address, uint8_t byteValue)
         exit(-2);
     }
 }
+
+void Memory::writeWord(uint16_t address, uint16_t wordValue)
+{
+    writeByte(address, wordValue);
+    writeByte(address + 1, wordValue >> 8);
+}

@@ -236,6 +236,24 @@ TEST(ProcessorTest, loadDataAtAFromDE)
     ASSERT_EQ(cpu.getPC(), 0);
 }
 
+TEST(ProcessorTest, callImmediate)
+{
+    MockMemory mmu;
+    Processor cpu = Processor(&mmu);
+    cpu.setPC(0x29);
+    cpu.setSP(0xfffe);
+    EXPECT_CALL(mmu, readWord(0x29))
+        .Times(1)
+        .WillOnce(Return(0x95));
+    EXPECT_CALL(mmu, writeWord(0xFFFC, 0x2B))
+        .Times(1);
+
+    cpu.map(0xCD);
+
+    ASSERT_EQ(cpu.getSP(), 0xfffc);
+    ASSERT_EQ(cpu.getPC(), 0x95);
+}
+
 // Prefix tests start here
 
 TEST(ProcessorTest, prefixOpcodesIncreasePC)

@@ -24,6 +24,8 @@ class Processor
     void ld_HL_a();
     // 0xAF
     void xor_a();
+    // 0xCD
+    void call_nn();
     // 0xE*
     void ld_HN_a();
     void ld_HC_a();
@@ -48,6 +50,7 @@ public:
     uint16_t getPC();
     void setPC(uint16_t wordValue);
     uint16_t getSP();
+    void setSP(uint16_t wordValue);
     void step();
     void map(uint8_t opcode);
     void prefixMap(uint8_t opcode);
