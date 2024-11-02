@@ -22,6 +22,8 @@ uint16_t Processor::getSP() { return sp; }
 int Processor::getMachineCycles() { return m; }
 
 void Processor::setA(uint8_t byteValue) { a = byteValue; }
+void Processor::setC(uint8_t byteValue) { c = byteValue; }
+void Processor::setF(uint8_t byteValue) { f = byteValue; }
 
 void Processor::setBC(uint16_t wordValue)
 {
@@ -59,7 +61,7 @@ void Processor::dump()
     ostringstream messageStream;
     messageStream << "CPU Registers" << hex << showbase << endl;
     messageStream << "\tA = " << unsigned(a) << ", F = " << unsigned(f) << ", AF = " << unsigned(a) << unsigned(f) << endl;
-    messageStream << "\tB = " << unsigned(b) << ", C = " << unsigned(c) << ", BC = " << unsigned(b) << unsigned(c) << endl;
+    messageStream << "\tB = " << unsigned(b) << ", C = " << unsigned(c) << ", BC = " << getBC() << endl;
     messageStream << "\tD = " << unsigned(d) << ", E = " << unsigned(e) << ", DE = " << getDE() << endl;
     messageStream << "\tH = " << unsigned(h) << ", L = " << unsigned(l) << ", HL = " << getHL() << endl;
     messageStream << "\tFLAGS: " << ((f & 0x80) != 0 ? "z" : "-") << ((f & 0x40) != 0 ? "n" : "-") << ((f & 0x20) != 0 ? "h" : "-") << ((f & 0x10) != 0 ? "c" : "-") << endl;
@@ -297,6 +299,9 @@ void Processor::prefixMap(uint8_t opcode)
 {
     switch (opcode)
     {
+    case 0x11:
+        rl_c();
+        break;
     case 0x7C:
         bit_h(7);
         break;
@@ -307,6 +312,23 @@ void Processor::prefixMap(uint8_t opcode)
         logger.logByte(__PRETTY_FUNCTION__, "OpCode", opcode);
         exit(-1);
     }
+}
+
+// 0xCB 0x11
+void Processor::rl_c()
+{
+    logger.info(__PRETTY_FUNCTION__, "RL C");
+    int carry = ((f & 0x10) != 0);
+    f = 0;
+    f |= ((c & 0x80) >> 3);
+    c <<= 1;
+    c += carry;
+    if (!c)
+        f |= 0x80;
+    m += 2;
+    logger.logWord(__PRETTY_FUNCTION__, "PC", pc);
+    logger.logByte(__PRETTY_FUNCTION__, "C", c);
+    logger.logByte(__PRETTY_FUNCTION__, "F", f);
 }
 
 // 0xCB 0x7C

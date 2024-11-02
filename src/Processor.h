@@ -36,6 +36,8 @@ class Processor
     void ld_HC_a();
 
     // Prefix Opcodes
+    //  0x11
+    void rl_c();
     //  0x7C
     void bit_h(int n);
 
@@ -46,6 +48,7 @@ public:
     void setA(uint8_t byteValue);
     uint8_t getB();
     uint8_t getC();
+    void setC(uint8_t byteValue);
     uint16_t getBC();
     void setBC(uint16_t wordValue);
     uint8_t getD();
@@ -53,6 +56,7 @@ public:
     uint16_t getDE();
     void setDE(uint16_t wordValue);
     uint8_t getF();
+    void setF(uint8_t byteValue);
     uint16_t getHL();
     void setHL(uint16_t wordValue);
     uint16_t getPC();

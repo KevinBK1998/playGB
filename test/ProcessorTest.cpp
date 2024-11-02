@@ -149,31 +149,26 @@ TEST(ProcessorTest, loadDataAtHighCFromA)
     MockMemory mmu;
     Processor cpu = Processor(&mmu);
     cpu.setA(0);
-    EXPECT_CALL(mmu, readByte(0))
-        .Times(1)
-        .WillOnce(Return(0x11));
+    cpu.setC(0x11);
     EXPECT_CALL(mmu, writeByte(0xff11, 0))
         .Times(1);
 
-    cpu.map(0xE);
     cpu.map(0xE2);
 
-    ASSERT_EQ(cpu.getPC(), 1);
+    ASSERT_EQ(cpu.getPC(), 0);
 }
 
 TEST(ProcessorTest, incC)
 {
     MockMemory mmu;
     Processor cpu = Processor(&mmu);
-    EXPECT_CALL(mmu, readByte(0))
-        .Times(1)
-        .WillOnce(Return(0x11));
+    cpu.setA(0);
+    cpu.setF(0);
+    cpu.setC(0x11);
 
-    cpu.map(0xAF);
-    cpu.map(0xE);
     cpu.map(0xC);
 
-    ASSERT_EQ(cpu.getPC(), 1);
+    ASSERT_EQ(cpu.getPC(), 0);
     ASSERT_EQ(cpu.getC(), 0x12);
     ASSERT_EQ(cpu.getF(), 0);
 }
@@ -321,7 +316,7 @@ TEST(ProcessorTest, prefixOpcodesIncreasePC)
 TEST(ProcessorTest, prefixBitCheck)
 {
     Processor cpu;
-    cpu.map(0xAF);
+    cpu.setF(0);
     cpu.setHL(0xFFFF);
 
     cpu.prefixMap(0x7C);
@@ -335,4 +330,45 @@ TEST(ProcessorTest, prefixBitCheck)
     ASSERT_EQ(cpu.getPC(), 0);
     ASSERT_EQ(cpu.getHL(), 0);
     ASSERT_EQ(cpu.getF(), 0xA0);
+}
+
+TEST(ProcessorTest, rotateLeftC)
+{
+    Processor cpu;
+    cpu.setC(0);
+    cpu.setF(0);
+
+    cpu.prefixMap(0x11);
+
+    ASSERT_EQ(cpu.getPC(), 0);
+    ASSERT_EQ(cpu.getC(), 0);
+    ASSERT_EQ(cpu.getF(), 0x80);
+    ASSERT_EQ(cpu.getMachineCycles(), 2);
+
+    cpu.setC(0);
+    cpu.setF(0x10);
+
+    cpu.prefixMap(0x11);
+
+    ASSERT_EQ(cpu.getPC(), 0);
+    ASSERT_EQ(cpu.getC(), 1);
+    ASSERT_EQ(cpu.getF(), 0);
+
+    cpu.setC(0xFF);
+    cpu.setF(0);
+
+    cpu.prefixMap(0x11);
+
+    ASSERT_EQ(cpu.getPC(), 0);
+    ASSERT_EQ(cpu.getC(), 0xFE);
+    ASSERT_EQ(cpu.getF(), 0x10);
+
+    cpu.setC(0xFF);
+    cpu.setF(0x10);
+
+    cpu.prefixMap(0x11);
+
+    ASSERT_EQ(cpu.getPC(), 0);
+    ASSERT_EQ(cpu.getC(), 0xFF);
+    ASSERT_EQ(cpu.getF(), 0x10);
 }
