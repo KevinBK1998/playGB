@@ -4,8 +4,8 @@
 
 using namespace std;
 
-Processor::Processor() : mmu(new Memory()), pc(0), sp(0) {}
-Processor::Processor(Memory *mmu) : mmu(mmu), pc(0), sp(0) {}
+Processor::Processor() : mmu(new Memory()), pc(0), sp(0), m(0) {}
+Processor::Processor(Memory *mmu) : mmu(mmu), pc(0), sp(0), m(0) {}
 
 uint8_t Processor::getA() { return a; }
 uint8_t Processor::getB() { return b; }
@@ -17,6 +17,8 @@ uint16_t Processor::getDE() { return (d << 8) + e; }
 uint16_t Processor::getHL() { return (h << 8) + l; }
 uint16_t Processor::getPC() { return pc; }
 uint16_t Processor::getSP() { return sp; }
+
+int Processor::getMachineCycles() { return m; }
 
 void Processor::setA(uint8_t byteValue) { a = byteValue; }
 
@@ -54,7 +56,7 @@ void Processor::dump()
     messageStream << "\tD = " << unsigned(d) << ", E = " << unsigned(e) << ", DE = " << getDE() << endl;
     messageStream << "\tH = " << unsigned(h) << ", L = " << unsigned(l) << ", HL = " << getHL() << endl;
     messageStream << "\tFLAGS: " << ((f & 0x80) != 0 ? "z" : "-") << ((f & 0x40) != 0 ? "n" : "-") << ((f & 0x20) != 0 ? "h" : "-") << ((f & 0x10) != 0 ? "c" : "-") << endl;
-    messageStream << "\tPC = " << pc << ", SP = " << sp << ", HL = " << getHL();
+    messageStream << "\tPC = " << pc << ", SP = " << sp << ", Machine Uptime = " << dec << m;
     logger.setLogLevel(DEBUG);
     logger.debug(__PRETTY_FUNCTION__, messageStream.str());
 }
@@ -68,13 +70,13 @@ void Processor::map(uint8_t opcode)
         logger.logWord(__PRETTY_FUNCTION__, "PC", pc);
         break;
     case 0x6:
-        ld_b_n();
+        loadImmediate("B", &b);
         break;
     case 0xC:
         inc_c();
         break;
     case 0xE:
-        ld_c_n();
+        loadImmediate("C", &c);
         break;
     case 0x11:
         ld_de_nn();
@@ -95,10 +97,11 @@ void Processor::map(uint8_t opcode)
         ldd_HL_a();
         break;
     case 0x3E:
-        ld_a_n();
+        loadImmediate("A", &a);
         break;
     case 0x4F:
-        ld_c_a();
+        logger.info(__PRETTY_FUNCTION__, "LD C, A");
+        load("C", &c, a);
         break;
     case 0x77:
         ld_HL_a();
@@ -127,13 +130,24 @@ void Processor::map(uint8_t opcode)
     }
 }
 
-// 0x06
-void Processor::ld_b_n()
+void Processor::load(string regName, uint8_t *registerPtr, uint8_t data)
 {
-    logger.info(__PRETTY_FUNCTION__, "LD B, N");
-    b = mmu->readByte(pc++);
-    logger.logByte(__PRETTY_FUNCTION__, "B", b);
+    *registerPtr = data;
+    m++;
+    logger.logByte(__PRETTY_FUNCTION__, regName, *registerPtr);
 }
+
+void Processor::loadImmediate(string regName, uint8_t *registerPtr)
+{
+    uint8_t n = mmu->readByte(pc++);
+    m++;
+    ostringstream messageStream;
+    messageStream << "LD " << regName << ", " << hex << showbase << unsigned(n) << endl;
+    logger.debug(__PRETTY_FUNCTION__, messageStream.str());
+    load(regName, registerPtr, n);
+}
+
+// 0x06
 
 void Processor::inc_c()
 {
@@ -147,13 +161,6 @@ void Processor::inc_c()
     c = result;
     logger.logByte(__PRETTY_FUNCTION__, "C", c);
     logger.logByte(__PRETTY_FUNCTION__, "F", f);
-}
-
-void Processor::ld_c_n()
-{
-    logger.info(__PRETTY_FUNCTION__, "LD C, N");
-    c = mmu->readByte(pc++);
-    logger.logByte(__PRETTY_FUNCTION__, "C", c);
 }
 
 // 0x11
@@ -213,22 +220,6 @@ void Processor::ldd_HL_a()
     setHL(getHL() - 1);
     logger.logWord(__PRETTY_FUNCTION__, "PC", pc);
     logger.logWord(__PRETTY_FUNCTION__, "HL", getHL());
-}
-
-void Processor::ld_a_n()
-{
-    logger.info(__PRETTY_FUNCTION__, "LD A, N");
-    a = mmu->readByte(pc++);
-    logger.logByte(__PRETTY_FUNCTION__, "A", a);
-}
-
-// 0x4F
-void Processor::ld_c_a()
-{
-    logger.info(__PRETTY_FUNCTION__, "LD C, A");
-    c = a;
-    logger.logByte(__PRETTY_FUNCTION__, "C", c);
-    logger.logByte(__PRETTY_FUNCTION__, "A", a);
 }
 
 // 0x77

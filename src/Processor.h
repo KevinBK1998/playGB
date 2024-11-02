@@ -1,3 +1,4 @@
+#include <string>
 #include "Memory.h"
 
 class Processor
@@ -8,10 +9,10 @@ class Processor
     uint8_t h, l;
     uint16_t pc, sp;
     void dump();
+    void load(std::string regName, uint8_t *registerPtr, uint8_t data);
+    void loadImmediate(std::string regName, uint8_t *registerPtr);
     // 0x06
-    void ld_b_n();
     void inc_c();
-    void ld_c_n();
     // 0x11
     void ld_de_nn();
     void ld_a_DE();
@@ -21,7 +22,6 @@ class Processor
     // 0x31
     void ld_sp_nn();
     void ldd_HL_a();
-    void ld_a_n();
     // 0x4F
     void ld_c_a();
     // 0x77
@@ -59,4 +59,5 @@ public:
     void step();
     void map(uint8_t opcode);
     void prefixMap(uint8_t opcode);
+    int getMachineCycles();
 };

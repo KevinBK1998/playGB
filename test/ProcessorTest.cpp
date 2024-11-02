@@ -126,6 +126,7 @@ TEST(ProcessorTest, loadAFromImm)
 
     ASSERT_EQ(cpu.getA(), 0x80);
     ASSERT_EQ(cpu.getPC(), 1);
+    ASSERT_EQ(cpu.getMachineCycles(), 2);
 }
 
 TEST(ProcessorTest, loadCFromImm)
@@ -140,6 +141,7 @@ TEST(ProcessorTest, loadCFromImm)
 
     ASSERT_EQ(cpu.getC(), 0x11);
     ASSERT_EQ(cpu.getPC(), 1);
+    ASSERT_EQ(cpu.getMachineCycles(), 2);
 }
 
 TEST(ProcessorTest, loadDataAtHighCFromA)
@@ -263,6 +265,7 @@ TEST(ProcessorTest, loadCFromA)
 
     ASSERT_EQ(cpu.getPC(), 0);
     ASSERT_EQ(cpu.getC(), 0xF);
+    ASSERT_EQ(cpu.getMachineCycles(), 1);
 }
 
 TEST(ProcessorTest, loadBFromImmediate)
@@ -277,6 +280,7 @@ TEST(ProcessorTest, loadBFromImmediate)
 
     ASSERT_EQ(cpu.getB(), 0x11);
     ASSERT_EQ(cpu.getPC(), 1);
+    ASSERT_EQ(cpu.getMachineCycles(), 2);
 }
 
 // Prefix tests start here
