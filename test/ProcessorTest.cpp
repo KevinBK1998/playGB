@@ -265,6 +265,20 @@ TEST(ProcessorTest, loadCFromA)
     ASSERT_EQ(cpu.getC(), 0xF);
 }
 
+TEST(ProcessorTest, loadBFromImmediate)
+{
+    MockMemory mmu;
+    Processor cpu = Processor(&mmu);
+    EXPECT_CALL(mmu, readByte(0))
+        .Times(1)
+        .WillOnce(Return(0x11));
+
+    cpu.map(0x6);
+
+    ASSERT_EQ(cpu.getB(), 0x11);
+    ASSERT_EQ(cpu.getPC(), 1);
+}
+
 // Prefix tests start here
 
 TEST(ProcessorTest, prefixOpcodesIncreasePC)

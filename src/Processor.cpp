@@ -8,6 +8,7 @@ Processor::Processor() : mmu(new Memory()), pc(0), sp(0) {}
 Processor::Processor(Memory *mmu) : mmu(mmu), pc(0), sp(0) {}
 
 uint8_t Processor::getA() { return a; }
+uint8_t Processor::getB() { return b; }
 uint8_t Processor::getC() { return c; }
 uint8_t Processor::getD() { return d; }
 uint8_t Processor::getE() { return e; }
@@ -48,7 +49,10 @@ void Processor::dump()
     mmu->dump();
     ostringstream messageStream;
     messageStream << "CPU Registers" << hex << showbase << endl;
-    messageStream << "\tA = " << unsigned(a) << ", C = " << unsigned(c) << ", F = " << unsigned(f) << endl;
+    messageStream << "\tA = " << unsigned(a) << ", F = " << unsigned(f) << ", AF = " << unsigned(a) << unsigned(f) << endl;
+    messageStream << "\tB = " << unsigned(b) << ", C = " << unsigned(c) << ", BC = " << unsigned(b) << unsigned(c) << endl;
+    messageStream << "\tD = " << unsigned(d) << ", E = " << unsigned(e) << ", DE = " << getDE() << endl;
+    messageStream << "\tH = " << unsigned(h) << ", L = " << unsigned(l) << ", HL = " << getHL() << endl;
     messageStream << "\tFLAGS: " << ((f & 0x80) != 0 ? "z" : "-") << ((f & 0x40) != 0 ? "n" : "-") << ((f & 0x20) != 0 ? "h" : "-") << ((f & 0x10) != 0 ? "c" : "-") << endl;
     messageStream << "\tPC = " << pc << ", SP = " << sp << ", HL = " << getHL();
     logger.setLogLevel(DEBUG);
@@ -62,6 +66,9 @@ void Processor::map(uint8_t opcode)
     case 0:
         logger.info(__PRETTY_FUNCTION__, "NOP");
         logger.logWord(__PRETTY_FUNCTION__, "PC", pc);
+        break;
+    case 0x6:
+        ld_b_n();
         break;
     case 0xC:
         inc_c();
@@ -120,7 +127,14 @@ void Processor::map(uint8_t opcode)
     }
 }
 
-// 0x0C
+// 0x06
+void Processor::ld_b_n()
+{
+    logger.info(__PRETTY_FUNCTION__, "LD B, N");
+    b = mmu->readByte(pc++);
+    logger.logByte(__PRETTY_FUNCTION__, "B", b);
+}
+
 void Processor::inc_c()
 {
     logger.info(__PRETTY_FUNCTION__, "INC C");

@@ -3,11 +3,13 @@
 class Processor
 {
     Memory *mmu;
-    uint8_t a, c, d, e, f;
+    uint8_t a, b, c, d, e, f;
+    int m;
     uint8_t h, l;
     uint16_t pc, sp;
     void dump();
-    // 0x0C
+    // 0x06
+    void ld_b_n();
     void inc_c();
     void ld_c_n();
     // 0x11
@@ -41,6 +43,7 @@ public:
     Processor(Memory *mmu);
     uint8_t getA();
     void setA(uint8_t byteValue);
+    uint8_t getB();
     uint8_t getC();
     uint8_t getD();
     uint8_t getE();
