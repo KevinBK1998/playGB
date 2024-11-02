@@ -9,8 +9,9 @@ class Processor
     uint8_t h, l;
     uint16_t pc, sp;
     void dump();
-    void load(std::string regName, uint8_t *registerPtr, uint8_t data);
+    void load(std::string regName, uint8_t *registerPtr, uint8_t byteValue);
     void loadImmediate(std::string regName, uint8_t *registerPtr);
+    void push(std::string regName, uint16_t wordValue);
     // 0x06
     void inc_c();
     // 0x11
@@ -28,7 +29,7 @@ class Processor
     void ld_HL_a();
     // 0xAF
     void xor_a();
-    // 0xCD
+    // 0xC5
     void call_nn();
     // 0xE*
     void ld_HN_a();
@@ -45,6 +46,8 @@ public:
     void setA(uint8_t byteValue);
     uint8_t getB();
     uint8_t getC();
+    uint16_t getBC();
+    void setBC(uint16_t wordValue);
     uint8_t getD();
     uint8_t getE();
     uint16_t getDE();

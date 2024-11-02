@@ -13,6 +13,7 @@ uint8_t Processor::getC() { return c; }
 uint8_t Processor::getD() { return d; }
 uint8_t Processor::getE() { return e; }
 uint8_t Processor::getF() { return f; }
+uint16_t Processor::getBC() { return (b << 8) + c; }
 uint16_t Processor::getDE() { return (d << 8) + e; }
 uint16_t Processor::getHL() { return (h << 8) + l; }
 uint16_t Processor::getPC() { return pc; }
@@ -21,6 +22,12 @@ uint16_t Processor::getSP() { return sp; }
 int Processor::getMachineCycles() { return m; }
 
 void Processor::setA(uint8_t byteValue) { a = byteValue; }
+
+void Processor::setBC(uint16_t wordValue)
+{
+    b = wordValue >> 8;
+    c = wordValue;
+}
 
 void Processor::setDE(uint16_t wordValue)
 {
@@ -112,6 +119,9 @@ void Processor::map(uint8_t opcode)
     case 0xCB:
         prefixMap(mmu->readByte(pc++));
         break;
+    case 0xC5:
+        push("BC", getBC());
+        break;
     case 0xCD:
         call_nn();
         break;
@@ -130,9 +140,9 @@ void Processor::map(uint8_t opcode)
     }
 }
 
-void Processor::load(string regName, uint8_t *registerPtr, uint8_t data)
+void Processor::load(string regName, uint8_t *registerPtr, uint8_t byteValue)
 {
-    *registerPtr = data;
+    *registerPtr = byteValue;
     m++;
     logger.logByte(__PRETTY_FUNCTION__, regName, *registerPtr);
 }
@@ -142,9 +152,21 @@ void Processor::loadImmediate(string regName, uint8_t *registerPtr)
     uint8_t n = mmu->readByte(pc++);
     m++;
     ostringstream messageStream;
-    messageStream << "LD " << regName << ", " << hex << showbase << unsigned(n) << endl;
+    messageStream << "LD " << regName << ", " << hex << showbase << unsigned(n);
     logger.debug(__PRETTY_FUNCTION__, messageStream.str());
     load(regName, registerPtr, n);
+}
+
+void Processor::push(string regName, uint16_t wordValue)
+{
+    ostringstream messageStream;
+    messageStream << "PUSH " << regName;
+    logger.debug(__PRETTY_FUNCTION__, messageStream.str());
+    sp -= 2;
+    mmu->writeWord(sp, wordValue);
+    logger.logWord(__PRETTY_FUNCTION__, regName, wordValue);
+    logger.logWord(__PRETTY_FUNCTION__, "SP", sp);
+    m += 3;
 }
 
 // 0x06
@@ -241,7 +263,7 @@ void Processor::xor_a()
     logger.logByte(__PRETTY_FUNCTION__, "F", f);
 }
 
-// 0xCD
+// 0xC5
 void Processor::call_nn()
 {
     logger.info(__PRETTY_FUNCTION__, "CALL NN");
@@ -282,6 +304,7 @@ void Processor::prefixMap(uint8_t opcode)
     default:
         dump();
         logger.error(__PRETTY_FUNCTION__, "UNKNOWN PREFIX OPCODE");
+        logger.logByte(__PRETTY_FUNCTION__, "OpCode", opcode);
         exit(-1);
     }
 }

@@ -283,6 +283,22 @@ TEST(ProcessorTest, loadBFromImmediate)
     ASSERT_EQ(cpu.getMachineCycles(), 2);
 }
 
+TEST(ProcessorTest, pushBC)
+{
+    MockMemory mmu;
+    Processor cpu = Processor(&mmu);
+    cpu.setSP(0xfffe);
+    cpu.setBC(0x400);
+    EXPECT_CALL(mmu, writeWord(0xFFFC, 0x400))
+        .Times(1);
+
+    cpu.map(0xC5);
+
+    ASSERT_EQ(cpu.getSP(), 0xfffc);
+    ASSERT_EQ(cpu.getPC(), 0);
+    ASSERT_EQ(cpu.getMachineCycles(), 3);
+}
+
 // Prefix tests start here
 
 TEST(ProcessorTest, prefixOpcodesIncreasePC)
