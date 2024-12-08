@@ -12,6 +12,7 @@ class Processor
     void load(std::string regName, uint8_t *registerPtr, uint8_t byteValue);
     void loadImmediate(std::string regName, uint8_t *registerPtr);
     void push(std::string regName, uint16_t wordValue);
+    void pop(std::string regName);
     // 0x06
     void inc_c();
     // 0x11
@@ -31,6 +32,7 @@ class Processor
     // 0xAF
     void xor_a();
     // 0xC5
+    void pop_bc();
     void call_nn();
     // 0xE*
     void ld_HN_a();

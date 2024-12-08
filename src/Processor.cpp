@@ -121,11 +121,14 @@ void Processor::map(uint8_t opcode)
     case 0xAF:
         xor_a();
         break;
-    case 0xCB:
-        prefixMap(mmu->readByte(pc++));
+    case 0xC1:
+        pop("BC");
         break;
     case 0xC5:
         push("BC", getBC());
+        break;
+    case 0xCB:
+        prefixMap(mmu->readByte(pc++));
         break;
     case 0xCD:
         call_nn();
@@ -160,6 +163,22 @@ void Processor::loadImmediate(string regName, uint8_t *registerPtr)
     messageStream << "LD " << regName << ", " << hex << showbase << unsigned(n);
     logger.debug(__PRETTY_FUNCTION__, messageStream.str());
     load(regName, registerPtr, n);
+}
+
+void Processor::pop(string regName)
+{
+    ostringstream messageStream;
+    messageStream << "POP " << regName;
+    logger.debug(__PRETTY_FUNCTION__, messageStream.str());
+    uint16_t wordValue = mmu->readWord(sp);
+    sp += 2;
+    if (!regName.compare("BC"))
+    {
+        setBC(wordValue);
+    }
+    logger.logWord(__PRETTY_FUNCTION__, regName, wordValue);
+    logger.logWord(__PRETTY_FUNCTION__, "SP", sp);
+    m += 3;
 }
 
 void Processor::push(string regName, uint16_t wordValue)

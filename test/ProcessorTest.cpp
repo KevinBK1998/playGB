@@ -413,3 +413,21 @@ TEST(ProcessorTest, rotateLeftA)
     ASSERT_EQ(cpu.getA(), 0xFF);
     ASSERT_EQ(cpu.getF(), 0x10);
 }
+
+TEST(ProcessorTest, popBC)
+{
+    MockMemory mmu;
+    Processor cpu = Processor(&mmu);
+    cpu.setSP(0xfffa);
+    cpu.setBC(0);
+    EXPECT_CALL(mmu, readWord(0xFFFA))
+        .Times(1)
+        .WillOnce(Return(0x400));
+
+    cpu.map(0xC1);
+
+    ASSERT_EQ(cpu.getPC(), 0);
+    ASSERT_EQ(cpu.getSP(), 0xfffc);
+    ASSERT_EQ(cpu.getBC(), 0x400);
+    ASSERT_EQ(cpu.getMachineCycles(), 3);
+}
