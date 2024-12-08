@@ -460,3 +460,15 @@ TEST(ProcessorTest, ldiHLFromA)
     ASSERT_EQ(cpu.getPC(), 0);
     ASSERT_EQ(cpu.getMachineCycles(), 2);
 }
+
+TEST(ProcessorTest, inc_hl)
+{
+    Processor cpu;
+    cpu.setHL(0);
+
+    cpu.map(0x23);
+
+    ASSERT_EQ(cpu.getHL(), 1);
+    ASSERT_EQ(cpu.getPC(), 0);
+    ASSERT_EQ(cpu.getMachineCycles(), 1);
+}

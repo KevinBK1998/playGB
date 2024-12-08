@@ -108,6 +108,9 @@ void Processor::map(uint8_t opcode)
     case 0x22:
         ldi_HL_a();
         break;
+    case 0x23:
+        inc_hl();
+        break;
     case 0x31:
         ld_sp_nn();
         break;
@@ -274,6 +277,15 @@ void Processor::ldi_HL_a()
     mmu->writeByte(getHL(), a);
     setHL(getHL() + 1);
     m += 2;
+    logger.logWord(__PRETTY_FUNCTION__, "PC", pc);
+    logger.logWord(__PRETTY_FUNCTION__, "HL", getHL());
+}
+
+void Processor::inc_hl()
+{
+    logger.info(__PRETTY_FUNCTION__, "INC HL");
+    setHL(getHL() + 1);
+    m++;
     logger.logWord(__PRETTY_FUNCTION__, "PC", pc);
     logger.logWord(__PRETTY_FUNCTION__, "HL", getHL());
 }

@@ -24,6 +24,7 @@ class Processor
     void jr_nz_n();
     void ld_hl_nn();
     void ldi_HL_a();
+    void inc_hl();
     // 0x31
     void ld_sp_nn();
     void ldd_HL_a();
