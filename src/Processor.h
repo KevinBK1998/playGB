@@ -23,6 +23,7 @@ class Processor
     // 0x2*
     void jr_nz_n();
     void ld_hl_nn();
+    void ldi_HL_a();
     // 0x31
     void ld_sp_nn();
     void ldd_HL_a();

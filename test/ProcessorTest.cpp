@@ -444,3 +444,19 @@ TEST(ProcessorTest, decB)
     ASSERT_EQ(cpu.getBC(), 0x300);
     ASSERT_EQ(cpu.getF(), 0);
 }
+
+TEST(ProcessorTest, ldiHLFromA)
+{
+    MockMemory mmu;
+    Processor cpu = Processor(&mmu);
+    cpu.setA(0);
+    cpu.setHL(0);
+    EXPECT_CALL(mmu, writeByte(0, 0))
+        .Times(1);
+
+    cpu.map(0x22);
+
+    ASSERT_EQ(cpu.getHL(), 1);
+    ASSERT_EQ(cpu.getPC(), 0);
+    ASSERT_EQ(cpu.getMachineCycles(), 2);
+}

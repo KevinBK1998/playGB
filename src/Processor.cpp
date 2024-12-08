@@ -105,6 +105,9 @@ void Processor::map(uint8_t opcode)
     case 0x21:
         ld_hl_nn();
         break;
+    case 0x22:
+        ldi_HL_a();
+        break;
     case 0x31:
         ld_sp_nn();
         break;
@@ -261,6 +264,16 @@ void Processor::ld_hl_nn()
     logger.info(__PRETTY_FUNCTION__, "LD HL, NN");
     setHL(mmu->readWord(pc));
     pc += 2;
+    logger.logWord(__PRETTY_FUNCTION__, "PC", pc);
+    logger.logWord(__PRETTY_FUNCTION__, "HL", getHL());
+}
+
+void Processor::ldi_HL_a()
+{
+    logger.info(__PRETTY_FUNCTION__, "LDI[HL], A");
+    mmu->writeByte(getHL(), a);
+    setHL(getHL() + 1);
+    m += 2;
     logger.logWord(__PRETTY_FUNCTION__, "PC", pc);
     logger.logWord(__PRETTY_FUNCTION__, "HL", getHL());
 }
