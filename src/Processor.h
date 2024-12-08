@@ -13,7 +13,8 @@ class Processor
     void loadImmediate(std::string regName, uint8_t *registerPtr);
     void push(std::string regName, uint16_t wordValue);
     void pop(std::string regName);
-    // 0x06
+    // 0x05
+    void dec_b();
     void inc_c();
     // 0x11
     void ld_de_nn();

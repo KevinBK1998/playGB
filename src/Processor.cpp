@@ -78,6 +78,9 @@ void Processor::map(uint8_t opcode)
         logger.info(__PRETTY_FUNCTION__, "NOP");
         logger.logWord(__PRETTY_FUNCTION__, "PC", pc);
         break;
+    case 0x5:
+        dec_b();
+        break;
     case 0x6:
         loadImmediate("B", &b);
         break;
@@ -193,7 +196,20 @@ void Processor::push(string regName, uint16_t wordValue)
     m += 3;
 }
 
-// 0x06
+// 0x05
+void Processor::dec_b()
+{
+    logger.info(__PRETTY_FUNCTION__, "DEC B");
+    uint8_t result = b - 1;
+    f &= 0x10;
+    if (!result)
+        f |= 0x80;
+    if ((b & 0xF) + 1 > 0xF)
+        f |= 0x20;
+    b = result;
+    logger.logByte(__PRETTY_FUNCTION__, "B", b);
+    logger.logByte(__PRETTY_FUNCTION__, "F", f);
+}
 
 void Processor::inc_c()
 {

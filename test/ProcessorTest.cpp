@@ -162,7 +162,6 @@ TEST(ProcessorTest, incC)
 {
     MockMemory mmu;
     Processor cpu = Processor(&mmu);
-    cpu.setA(0);
     cpu.setF(0);
     cpu.setC(0x11);
 
@@ -430,4 +429,18 @@ TEST(ProcessorTest, popBC)
     ASSERT_EQ(cpu.getSP(), 0xfffc);
     ASSERT_EQ(cpu.getBC(), 0x400);
     ASSERT_EQ(cpu.getMachineCycles(), 3);
+}
+
+TEST(ProcessorTest, decB)
+{
+    MockMemory mmu;
+    Processor cpu = Processor(&mmu);
+    cpu.setF(0);
+    cpu.setBC(0x400);
+
+    cpu.map(0x5);
+
+    ASSERT_EQ(cpu.getPC(), 0);
+    ASSERT_EQ(cpu.getBC(), 0x300);
+    ASSERT_EQ(cpu.getF(), 0);
 }
