@@ -16,6 +16,7 @@ class Processor
     void inc_c();
     // 0x11
     void ld_de_nn();
+    void rl_a();
     void ld_a_DE();
     // 0x2*
     void jr_nz_n();

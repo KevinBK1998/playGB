@@ -90,6 +90,9 @@ void Processor::map(uint8_t opcode)
     case 0x11:
         ld_de_nn();
         break;
+    case 0x17:
+        rl_a();
+        break;
     case 0x1A:
         ld_a_DE();
         break;
@@ -302,6 +305,10 @@ void Processor::prefixMap(uint8_t opcode)
     case 0x11:
         rl_c();
         break;
+    case 0x17:
+        rl_a();
+        m++;
+        break;
     case 0x7C:
         bit_h(7);
         break;
@@ -328,6 +335,22 @@ void Processor::rl_c()
     m += 2;
     logger.logWord(__PRETTY_FUNCTION__, "PC", pc);
     logger.logByte(__PRETTY_FUNCTION__, "C", c);
+    logger.logByte(__PRETTY_FUNCTION__, "F", f);
+}
+
+void Processor::rl_a()
+{
+    logger.info(__PRETTY_FUNCTION__, "RL A");
+    int carry = ((f & 0x10) != 0);
+    f = 0;
+    f |= ((a & 0x80) >> 3);
+    a <<= 1;
+    a += carry;
+    if (!a)
+        f |= 0x80;
+    m++;
+    logger.logWord(__PRETTY_FUNCTION__, "PC", pc);
+    logger.logByte(__PRETTY_FUNCTION__, "A", a);
     logger.logByte(__PRETTY_FUNCTION__, "F", f);
 }
 

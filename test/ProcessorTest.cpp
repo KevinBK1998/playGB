@@ -372,3 +372,44 @@ TEST(ProcessorTest, rotateLeftC)
     ASSERT_EQ(cpu.getC(), 0xFF);
     ASSERT_EQ(cpu.getF(), 0x10);
 }
+
+TEST(ProcessorTest, rotateLeftA)
+{
+    Processor cpu;
+    cpu.setA(0);
+    cpu.setF(0);
+
+    cpu.map(0x17);
+
+    ASSERT_EQ(cpu.getPC(), 0);
+    ASSERT_EQ(cpu.getA(), 0);
+    ASSERT_EQ(cpu.getF(), 0x80);
+    ASSERT_EQ(cpu.getMachineCycles(), 1);
+
+    cpu.setA(0);
+    cpu.setF(0x10);
+
+    cpu.map(0x17);
+
+    ASSERT_EQ(cpu.getPC(), 0);
+    ASSERT_EQ(cpu.getA(), 1);
+    ASSERT_EQ(cpu.getF(), 0);
+
+    cpu.setA(0xFF);
+    cpu.setF(0);
+
+    cpu.map(0x17);
+
+    ASSERT_EQ(cpu.getPC(), 0);
+    ASSERT_EQ(cpu.getA(), 0xFE);
+    ASSERT_EQ(cpu.getF(), 0x10);
+
+    cpu.setA(0xFF);
+    cpu.setF(0x10);
+
+    cpu.map(0x17);
+
+    ASSERT_EQ(cpu.getPC(), 0);
+    ASSERT_EQ(cpu.getA(), 0xFF);
+    ASSERT_EQ(cpu.getF(), 0x10);
+}

@@ -7,7 +7,7 @@ using namespace std;
 
 int main()
 {
-    uint16_t BREAK_POINT = 0xC;
+    uint16_t BREAK_POINT = 0x99;
     logger.info(__PRETTY_FUNCTION__, "START");
     Memory *mmu = new Memory("rom/bios.gb");
     Processor cpu(mmu);
