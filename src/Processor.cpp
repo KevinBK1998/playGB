@@ -136,6 +136,9 @@ void Processor::map(uint8_t opcode)
     case 0xC5:
         push("BC", getBC());
         break;
+    case 0xC9:
+        ret();
+        break;
     case 0xCB:
         prefixMap(mmu->readByte(pc++));
         break;
@@ -336,6 +339,17 @@ void Processor::call_nn()
     uint16_t nn = mmu->readWord(pc);
     mmu->writeWord(sp, pc + 2);
     pc = nn;
+    logger.logWord(__PRETTY_FUNCTION__, "SP", sp);
+    logger.logWord(__PRETTY_FUNCTION__, "PC", pc);
+}
+
+void Processor::ret()
+{
+    logger.info(__PRETTY_FUNCTION__, "RET");
+    uint16_t nn = mmu->readWord(sp);
+    sp += 2;
+    pc = nn;
+    m += 3;
     logger.logWord(__PRETTY_FUNCTION__, "SP", sp);
     logger.logWord(__PRETTY_FUNCTION__, "PC", pc);
 }

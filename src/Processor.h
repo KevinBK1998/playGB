@@ -37,6 +37,7 @@ class Processor
     // 0xC5
     void pop_bc();
     void call_nn();
+    void ret();
     // 0xE*
     void ld_HN_a();
     void ld_HC_a();

@@ -472,3 +472,20 @@ TEST(ProcessorTest, inc_hl)
     ASSERT_EQ(cpu.getPC(), 0);
     ASSERT_EQ(cpu.getMachineCycles(), 1);
 }
+
+TEST(ProcessorTest, ret)
+{
+    MockMemory mmu;
+    Processor cpu = Processor(&mmu);
+    cpu.setPC(0xA7);
+    cpu.setSP(0xfffc);
+    EXPECT_CALL(mmu, readWord(0xFFFC))
+        .Times(1)
+        .WillOnce(Return(0x2B));
+
+    cpu.map(0xC9);
+
+    ASSERT_EQ(cpu.getSP(), 0xfffe);
+    ASSERT_EQ(cpu.getPC(), 0x2B);
+    ASSERT_EQ(cpu.getMachineCycles(), 3);
+}
