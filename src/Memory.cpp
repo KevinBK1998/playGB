@@ -8,7 +8,7 @@ using namespace std;
 
 Memory::Memory()
 {
-    for (int i = 0; i < 256; i++)
+    for (int i = 0; i < 512; i++)
     {
         rom[i] = 0;
     }
@@ -17,12 +17,32 @@ Memory::Memory()
 Memory::Memory(Graphics *gpu) : gpu(gpu) {}
 Memory::Memory(Audio *apu) : apu(apu) {}
 
-Memory::Memory(std::string filename) : gpu(new Graphics()), apu(new Audio())
+Memory::Memory(std::string bios) : gpu(new Graphics()), apu(new Audio())
 {
-    ifstream fin(filename);
+    ifstream fin(bios);
     char c;
     int i = 0;
     while (i < 256 && fin)
+    {
+        fin.get(c);
+        rom[i++] = c;
+    }
+    fin.close();
+}
+
+Memory::Memory(std::string bios, std::string filename) : gpu(new Graphics()), apu(new Audio())
+{
+    ifstream biosIn(bios);
+    ifstream fin(filename);
+    char c;
+    int i = 0;
+    while (i < 256 && biosIn)
+    {
+        fin.get(c);
+        biosIn.get(c);
+        rom[i++] = c;
+    }
+    while (i < 512 && fin)
     {
         fin.get(c);
         rom[i++] = c;

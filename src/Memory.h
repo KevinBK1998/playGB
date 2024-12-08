@@ -8,7 +8,7 @@
 
 class Memory
 {
-    uint8_t rom[256], ram[128];
+    uint8_t rom[512], ram[128];
     Graphics *gpu;
     Audio *apu;
     uint8_t readSpecial(uint16_t address);
@@ -17,7 +17,8 @@ public:
     Memory();
     Memory(Graphics *gpu);
     Memory(Audio *apu);
-    Memory(std::string filename);
+    Memory(std::string bios);
+    Memory(std::string bios, std::string filename);
     void dump();
     virtual uint8_t readByte(uint16_t address);
     virtual uint16_t readWord(uint16_t address);
