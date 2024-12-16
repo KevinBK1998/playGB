@@ -508,12 +508,44 @@ TEST(ProcessorTest, incDE)
 TEST(ProcessorTest, loadAFromE)
 {
     Processor cpu;
-    cpu.setE(0xF);
-    cpu.setA(0x0);
+    cpu.setE(5);
+    cpu.setA(0);
 
     cpu.map(0x7B);
 
     ASSERT_EQ(cpu.getPC(), 0);
-    ASSERT_EQ(cpu.getA(), 0xF);
+    ASSERT_EQ(cpu.getA(), 5);
     ASSERT_EQ(cpu.getMachineCycles(), 1);
+}
+
+TEST(ProcessorTest, compareN)
+{
+    MockMemory mmu;
+    Processor cpu = Processor(&mmu);
+
+    EXPECT_CALL(mmu, readByte(0))
+        .Times(1)
+        .WillOnce(Return(0x34));
+    EXPECT_CALL(mmu, readByte(1))
+        .Times(1)
+        .WillOnce(Return(0x34));
+
+    cpu.setA(5);
+    cpu.setF(0x80);
+
+    cpu.map(0xFE);
+
+    ASSERT_EQ(cpu.getPC(), 1);
+    ASSERT_EQ(cpu.getA(), 5);
+    ASSERT_EQ(cpu.getF(), 0x50);
+    ASSERT_EQ(cpu.getMachineCycles(), 2);
+
+    cpu.setA(0x34);
+
+    cpu.map(0xFE);
+
+    ASSERT_EQ(cpu.getPC(), 2);
+    ASSERT_EQ(cpu.getA(), 0x34);
+    ASSERT_EQ(cpu.getF(), 0xC0);
+    ASSERT_EQ(cpu.getMachineCycles(), 4);
 }

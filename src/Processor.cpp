@@ -160,6 +160,9 @@ void Processor::map(uint8_t opcode)
     case 0xE2:
         ld_HC_a();
         break;
+    case 0xFE:
+        cp_n();
+        break;
 
     default:
         dump();
@@ -387,6 +390,25 @@ void Processor::ld_HC_a()
     logger.logByte(__PRETTY_FUNCTION__, "A", a);
     logger.logByte(__PRETTY_FUNCTION__, "C", c);
     mmu->writeByte(0xFF00 + c, a);
+}
+
+void Processor::cp_n()
+{
+    logger.info(__PRETTY_FUNCTION__, "CP N");
+    logger.logByte(__PRETTY_FUNCTION__, "A", a);
+    uint8_t n = mmu->readByte(pc);
+    logger.logByte(__PRETTY_FUNCTION__, "N", n);
+    int res = a - n;
+    f = 0x40;
+    if (!(res & 0xFF))
+        f |= 0x80;
+    if ((a & 0xF) - (n & 0xF) < 0)
+        f |= 0x20;
+    if (res < 0)
+        f |= 0x10;
+    logger.logByte(__PRETTY_FUNCTION__, "F", f);
+    pc++;
+    m += 2;
 }
 
 void Processor::prefixMap(uint8_t opcode)

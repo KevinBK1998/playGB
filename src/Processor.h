@@ -48,6 +48,8 @@ class Processor
     void rl_c();
     //  0x7C
     void bit_h(int n);
+    // 0xFE
+    void cp_n();
 
 public:
     Processor();
