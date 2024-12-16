@@ -18,6 +18,7 @@ class Processor
     void inc_c();
     // 0x11
     void ld_de_nn();
+    void inc_de();
     void rl_a();
     void ld_a_DE();
     // 0x2*
@@ -53,6 +54,9 @@ public:
     Processor(Memory *mmu);
     uint8_t getA();
     void setA(uint8_t byteValue);
+    uint8_t getF();
+    void setF(uint8_t byteValue);
+    uint16_t getAF();
     uint8_t getB();
     uint8_t getC();
     void setC(uint8_t byteValue);
@@ -62,8 +66,6 @@ public:
     uint8_t getE();
     uint16_t getDE();
     void setDE(uint16_t wordValue);
-    uint8_t getF();
-    void setF(uint8_t byteValue);
     uint16_t getHL();
     void setHL(uint16_t wordValue);
     uint16_t getPC();

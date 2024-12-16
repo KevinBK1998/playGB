@@ -13,6 +13,7 @@ uint8_t Processor::getC() { return c; }
 uint8_t Processor::getD() { return d; }
 uint8_t Processor::getE() { return e; }
 uint8_t Processor::getF() { return f; }
+uint16_t Processor::getAF() { return (a << 8) + f; }
 uint16_t Processor::getBC() { return (b << 8) + c; }
 uint16_t Processor::getDE() { return (d << 8) + e; }
 uint16_t Processor::getHL() { return (h << 8) + l; }
@@ -60,7 +61,7 @@ void Processor::dump()
     mmu->dump();
     ostringstream messageStream;
     messageStream << "CPU Registers" << hex << showbase << endl;
-    messageStream << "\tA = " << unsigned(a) << ", F = " << unsigned(f) << ", AF = " << unsigned(a) << unsigned(f) << endl;
+    messageStream << "\tA = " << unsigned(a) << ", F = " << unsigned(f) << ", AF = " << getAF() << endl;
     messageStream << "\tB = " << unsigned(b) << ", C = " << unsigned(c) << ", BC = " << getBC() << endl;
     messageStream << "\tD = " << unsigned(d) << ", E = " << unsigned(e) << ", DE = " << getDE() << endl;
     messageStream << "\tH = " << unsigned(h) << ", L = " << unsigned(l) << ", HL = " << getHL() << endl;
@@ -92,6 +93,9 @@ void Processor::map(uint8_t opcode)
         break;
     case 0x11:
         ld_de_nn();
+        break;
+    case 0x13:
+        inc_de();
         break;
     case 0x17:
         rl_a();
@@ -242,6 +246,14 @@ void Processor::ld_de_nn()
     pc += 2;
     setDE(nn);
     logger.logWord(__PRETTY_FUNCTION__, "PC", pc);
+    logger.logWord(__PRETTY_FUNCTION__, "DE", getDE());
+}
+
+void Processor::inc_de()
+{
+    logger.info(__PRETTY_FUNCTION__, "INC DE");
+    setDE(getDE() + 1);
+    m++;
     logger.logWord(__PRETTY_FUNCTION__, "DE", getDE());
 }
 

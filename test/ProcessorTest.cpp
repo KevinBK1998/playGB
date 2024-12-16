@@ -489,3 +489,18 @@ TEST(ProcessorTest, ret)
     ASSERT_EQ(cpu.getPC(), 0x2B);
     ASSERT_EQ(cpu.getMachineCycles(), 3);
 }
+
+TEST(ProcessorTest, incDE)
+{
+    MockMemory mmu;
+    Processor cpu = Processor(&mmu);
+    cpu.setF(0);
+    cpu.setDE(0x101);
+
+    cpu.map(0x13);
+
+    ASSERT_EQ(cpu.getPC(), 0);
+    ASSERT_EQ(cpu.getDE(), 0x102);
+    ASSERT_EQ(cpu.getF(), 0);
+    ASSERT_EQ(cpu.getMachineCycles(), 1);
+}
