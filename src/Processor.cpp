@@ -24,6 +24,7 @@ int Processor::getMachineCycles() { return m; }
 
 void Processor::setA(uint8_t byteValue) { a = byteValue; }
 void Processor::setC(uint8_t byteValue) { c = byteValue; }
+void Processor::setE(uint8_t byteValue) { e = byteValue; }
 void Processor::setF(uint8_t byteValue) { f = byteValue; }
 
 void Processor::setBC(uint16_t wordValue)
@@ -130,6 +131,10 @@ void Processor::map(uint8_t opcode)
         break;
     case 0x77:
         ld_HL_a();
+        break;
+    case 0x7B:
+        logger.info(__PRETTY_FUNCTION__, "LD A, E");
+        load("A", &a, e);
         break;
     case 0xAF:
         xor_a();

@@ -495,12 +495,25 @@ TEST(ProcessorTest, incDE)
     MockMemory mmu;
     Processor cpu = Processor(&mmu);
     cpu.setF(0);
-    cpu.setDE(0x101);
+    cpu.setDE(0x104);
 
     cpu.map(0x13);
 
     ASSERT_EQ(cpu.getPC(), 0);
-    ASSERT_EQ(cpu.getDE(), 0x102);
+    ASSERT_EQ(cpu.getDE(), 0x105);
     ASSERT_EQ(cpu.getF(), 0);
+    ASSERT_EQ(cpu.getMachineCycles(), 1);
+}
+
+TEST(ProcessorTest, loadAFromE)
+{
+    Processor cpu;
+    cpu.setE(0xF);
+    cpu.setA(0x0);
+
+    cpu.map(0x7B);
+
+    ASSERT_EQ(cpu.getPC(), 0);
+    ASSERT_EQ(cpu.getA(), 0xF);
     ASSERT_EQ(cpu.getMachineCycles(), 1);
 }

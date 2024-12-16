@@ -64,6 +64,7 @@ public:
     void setBC(uint16_t wordValue);
     uint8_t getD();
     uint8_t getE();
+    void setE(uint8_t byteValue);
     uint16_t getDE();
     void setDE(uint16_t wordValue);
     uint16_t getHL();
