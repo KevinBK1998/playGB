@@ -42,6 +42,7 @@ class Processor
     // 0xE*
     void ld_HN_a();
     void ld_HC_a();
+    void ldNN_a();
 
     // Prefix Opcodes
     //  0x11

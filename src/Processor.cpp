@@ -160,6 +160,9 @@ void Processor::map(uint8_t opcode)
     case 0xE2:
         ld_HC_a();
         break;
+    case 0xEA:
+        ldNN_a();
+        break;
     case 0xFE:
         cp_n();
         break;
@@ -390,6 +393,17 @@ void Processor::ld_HC_a()
     logger.logByte(__PRETTY_FUNCTION__, "A", a);
     logger.logByte(__PRETTY_FUNCTION__, "C", c);
     mmu->writeByte(0xFF00 + c, a);
+}
+
+void Processor::ldNN_a()
+{
+    logger.info(__PRETTY_FUNCTION__, "LD [NN], A");
+    logger.logByte(__PRETTY_FUNCTION__, "A", a);
+    uint16_t nn = mmu->readWord(pc);
+    logger.logWord(__PRETTY_FUNCTION__, "NN", nn);
+    mmu->writeByte(nn, a);
+    pc += 2;
+    m += 4;
 }
 
 void Processor::cp_n()

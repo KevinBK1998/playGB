@@ -549,3 +549,21 @@ TEST(ProcessorTest, compareN)
     ASSERT_EQ(cpu.getF(), 0xC0);
     ASSERT_EQ(cpu.getMachineCycles(), 4);
 }
+
+TEST(ProcessorTest, loadAtImmediateAddress)
+{
+    MockMemory mmu;
+    Processor cpu = Processor(&mmu);
+    EXPECT_CALL(mmu, readWord(0))
+        .Times(1)
+        .WillOnce(Return(0x9910));
+    EXPECT_CALL(mmu, writeByte(0x9910, 0x19))
+        .Times(1);
+    cpu.setA(0x19);
+
+    cpu.map(0xEA);
+
+    ASSERT_EQ(cpu.getPC(), 2);
+    ASSERT_EQ(cpu.getA(), 0x19);
+    ASSERT_EQ(cpu.getMachineCycles(), 4);
+}
