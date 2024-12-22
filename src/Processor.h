@@ -26,6 +26,7 @@ class Processor
     void ld_hl_nn();
     void ldi_HL_a();
     void inc_hl();
+    void jumpRelativeZero();
     // 0x31
     void ld_sp_nn();
     void decA();

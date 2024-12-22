@@ -581,3 +581,18 @@ TEST(ProcessorTest, decA)
     ASSERT_EQ(cpu.getF(), 0x40);
     ASSERT_EQ(cpu.getMachineCycles(), 1);
 }
+
+TEST(ProcessorTest, jumpRelativeZero)
+{
+    MockMemory mmu;
+    Processor cpu = Processor(&mmu);
+    cpu.setPC(0x4C);
+    EXPECT_CALL(mmu, readByte(0x4C))
+        .Times(1)
+        .WillOnce(Return(8));
+
+    cpu.map(0x28);
+
+    ASSERT_EQ(cpu.getPC(), 0x4D);
+    ASSERT_EQ(cpu.getMachineCycles(), 2);
+}

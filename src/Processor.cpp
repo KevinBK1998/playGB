@@ -116,6 +116,9 @@ void Processor::map(uint8_t opcode)
     case 0x23:
         inc_hl();
         break;
+    case 0x28:
+        jumpRelativeZero();
+        break;
     case 0x31:
         ld_sp_nn();
         break;
@@ -176,6 +179,20 @@ void Processor::map(uint8_t opcode)
         logger.logByte(__PRETTY_FUNCTION__, "OpCode", opcode);
         exit(-1);
     }
+}
+
+void Processor::jumpRelativeZero()
+{
+    logger.info(__PRETTY_FUNCTION__, "JR Z, N");
+    int8_t n = mmu->readByte(pc++);
+    m += 2;
+    if (f & 0x80)
+    {
+        pc += n;
+        m++;
+    }
+    logger.logWord(__PRETTY_FUNCTION__, "PC", pc);
+    logger.logByte(__PRETTY_FUNCTION__, "F", f);
 }
 
 void Processor::decA()
