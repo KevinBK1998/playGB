@@ -122,6 +122,9 @@ void Processor::map(uint8_t opcode)
     case 0x32:
         ldd_HL_a();
         break;
+    case 0x3D:
+        decA();
+        break;
     case 0x3E:
         loadImmediate("A", &a);
         break;
@@ -173,6 +176,22 @@ void Processor::map(uint8_t opcode)
         logger.logByte(__PRETTY_FUNCTION__, "OpCode", opcode);
         exit(-1);
     }
+}
+
+void Processor::decA()
+{
+    logger.info(__PRETTY_FUNCTION__, "DEC A");
+    uint8_t result = a - 1;
+    f &= 0x10;
+    if (!result)
+        f |= 0x80;
+    f |= 0x40;
+    if ((a & 0xF) - 1 < 0)
+        f |= 0x20;
+    a = result;
+    m++;
+    logger.logByte(__PRETTY_FUNCTION__, "A", a);
+    logger.logByte(__PRETTY_FUNCTION__, "F", f);
 }
 
 void Processor::load(string regName, uint8_t *registerPtr, uint8_t byteValue)

@@ -10,6 +10,7 @@ TEST(ProcessorTest, registerShouldBeZeroOnStart)
     Processor cpu;
     ASSERT_EQ(cpu.getPC(), 0);
     ASSERT_EQ(cpu.getSP(), 0);
+    ASSERT_EQ(cpu.getMachineCycles(), 0);
 }
 
 TEST(ProcessorTest, stepShouldincreasePC)
@@ -433,8 +434,7 @@ TEST(ProcessorTest, popBC)
 
 TEST(ProcessorTest, decB)
 {
-    MockMemory mmu;
-    Processor cpu = Processor(&mmu);
+    Processor cpu;
     cpu.setF(0);
     cpu.setBC(0x400);
 
@@ -566,4 +566,18 @@ TEST(ProcessorTest, loadAtImmediateAddress)
     ASSERT_EQ(cpu.getPC(), 2);
     ASSERT_EQ(cpu.getA(), 0x19);
     ASSERT_EQ(cpu.getMachineCycles(), 4);
+}
+
+TEST(ProcessorTest, decA)
+{
+    Processor cpu;
+    cpu.setF(0);
+    cpu.setA(0x19);
+
+    cpu.map(0x3D);
+
+    ASSERT_EQ(cpu.getPC(), 0);
+    ASSERT_EQ(cpu.getA(), 0x18);
+    ASSERT_EQ(cpu.getF(), 0x40);
+    ASSERT_EQ(cpu.getMachineCycles(), 1);
 }

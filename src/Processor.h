@@ -28,6 +28,7 @@ class Processor
     void inc_hl();
     // 0x31
     void ld_sp_nn();
+    void decA();
     void ldd_HL_a();
     // 0x4F
     void ld_c_a();
