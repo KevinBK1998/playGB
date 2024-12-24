@@ -7,12 +7,12 @@ using namespace std;
 
 int main()
 {
-    uint16_t BREAK_POINT = 0x40;
+    uint16_t BREAK_POINT = 0x4F;
     logger.info(__PRETTY_FUNCTION__, "START");
     Memory *mmu = new Memory("rom/bios.gb", "rom/ttt.gb");
     Processor cpu(mmu);
 
-    while (cpu.getPC() < 0x50 || (cpu.getPC() >= 0x95 && cpu.getPC() < 0xB0))
+    while (cpu.getPC() < 0x60 || (cpu.getPC() >= 0x95 && cpu.getPC() < 0xB0))
     {
         if (cpu.getPC() == BREAK_POINT)
         {

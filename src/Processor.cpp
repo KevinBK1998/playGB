@@ -124,6 +124,9 @@ void Processor::map(uint8_t opcode)
     case 0x28:
         jumpRelativeZero();
         break;
+    case 0x2E:
+        loadImmediate("L", &l);
+        break;
     case 0x31:
         loadImmediateWord(SP);
         break;
