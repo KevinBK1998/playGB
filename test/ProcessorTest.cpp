@@ -606,3 +606,17 @@ TEST(ProcessorTest, jumpRelativeZero)
     ASSERT_EQ(cpu.getPC(), 0x4D);
     ASSERT_EQ(cpu.getMachineCycles(), 2);
 }
+
+TEST(ProcessorTest, decC)
+{
+    Processor cpu;
+    cpu.setF(0);
+    cpu.setBC(0xC);
+
+    cpu.map(0xD);
+
+    ASSERT_EQ(cpu.getPC(), 0);
+    ASSERT_EQ(cpu.getBC(), 0xB);
+    ASSERT_EQ(cpu.getF(), 0x40);
+    ASSERT_EQ(cpu.getMachineCycles(), 1);
+}

@@ -91,6 +91,9 @@ void Processor::map(uint8_t opcode)
     case 0xC:
         inc_c();
         break;
+    case 0xD:
+        dec_c();
+        break;
     case 0xE:
         loadImmediate("C", &c);
         break;
@@ -182,6 +185,22 @@ void Processor::map(uint8_t opcode)
         logger.logByte(__PRETTY_FUNCTION__, "OpCode", opcode);
         exit(-1);
     }
+}
+
+void Processor::dec_c()
+{
+    logger.info(__PRETTY_FUNCTION__, "DEC C");
+    uint8_t result = c - 1;
+    f &= 0x10;
+    if (!result)
+        f |= 0x80;
+    f |= 0x40;
+    if ((c & 0xF) - 1 < 0)
+        f |= 0x20;
+    c = result;
+    m++;
+    logger.logByte(__PRETTY_FUNCTION__, "C", c);
+    logger.logByte(__PRETTY_FUNCTION__, "F", f);
 }
 
 void Processor::jumpRelativeZero()

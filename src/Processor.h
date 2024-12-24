@@ -36,6 +36,7 @@ class Processor
     // 0x05
     void dec_b();
     void inc_c();
+    void dec_c();
     // 0x11
     void ld_de_nn();
     void inc_de();
