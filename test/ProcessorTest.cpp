@@ -19,6 +19,7 @@ TEST(ProcessorTest, stepShouldincreasePC)
     cpu.step();
     ASSERT_EQ(cpu.getPC(), 1);
     ASSERT_EQ(cpu.getSP(), 0);
+    // ASSERT_EQ(cpu.getMachineCycles(), 1);
 }
 
 TEST(ProcessorTest, stepShouldCallMemoryRead)
@@ -44,6 +45,7 @@ TEST(ProcessorTest, testNopWorks)
     cpu.map(0);
     ASSERT_EQ(cpu.getSP(), 0);
     ASSERT_EQ(cpu.getPC(), 0);
+    ASSERT_EQ(cpu.getMachineCycles(), 1);
 }
 
 TEST(ProcessorTest, loadSPFromImm)
@@ -58,6 +60,7 @@ TEST(ProcessorTest, loadSPFromImm)
 
     ASSERT_EQ(cpu.getSP(), 0xFFFE);
     ASSERT_EQ(cpu.getPC(), 2);
+    ASSERT_EQ(cpu.getMachineCycles(), 3);
 }
 
 TEST(ProcessorTest, loadHLFromImm)
@@ -72,6 +75,7 @@ TEST(ProcessorTest, loadHLFromImm)
 
     ASSERT_EQ(cpu.getHL(), 0xFFFE);
     ASSERT_EQ(cpu.getPC(), 2);
+    ASSERT_EQ(cpu.getMachineCycles(), 3);
 }
 
 TEST(ProcessorTest, xorA)
@@ -81,6 +85,7 @@ TEST(ProcessorTest, xorA)
     ASSERT_EQ(cpu.getA(), 0);
     ASSERT_EQ(cpu.getF(), 0x80);
     ASSERT_EQ(cpu.getPC(), 0);
+    ASSERT_EQ(cpu.getMachineCycles(), 1);
 }
 
 TEST(ProcessorTest, lddAtHLFromA)
@@ -96,6 +101,7 @@ TEST(ProcessorTest, lddAtHLFromA)
 
     ASSERT_EQ(cpu.getHL(), 0);
     ASSERT_EQ(cpu.getPC(), 0);
+    ASSERT_EQ(cpu.getMachineCycles(), 2);
 }
 
 TEST(ProcessorTest, jumpRelative)
@@ -113,6 +119,7 @@ TEST(ProcessorTest, jumpRelative)
     cpu.step();
 
     ASSERT_EQ(cpu.getPC(), 7);
+    ASSERT_EQ(cpu.getMachineCycles(), 3);
 }
 
 TEST(ProcessorTest, loadAFromImm)
@@ -311,6 +318,7 @@ TEST(ProcessorTest, prefixOpcodesIncreasePC)
 
     ASSERT_EQ(cpu.getPC(), 2);
     ASSERT_EQ(cpu.getSP(), 0);
+    ASSERT_EQ(cpu.getMachineCycles(), 2);
 }
 
 TEST(ProcessorTest, prefixBitCheck)
@@ -323,6 +331,7 @@ TEST(ProcessorTest, prefixBitCheck)
     ASSERT_EQ(cpu.getPC(), 0);
     ASSERT_EQ(cpu.getHL(), 0xFFFF);
     ASSERT_EQ(cpu.getF(), 0x20);
+    ASSERT_EQ(cpu.getMachineCycles(), 2);
 
     cpu.setHL(0);
 
@@ -330,6 +339,7 @@ TEST(ProcessorTest, prefixBitCheck)
     ASSERT_EQ(cpu.getPC(), 0);
     ASSERT_EQ(cpu.getHL(), 0);
     ASSERT_EQ(cpu.getF(), 0xA0);
+    ASSERT_EQ(cpu.getMachineCycles(), 4);
 }
 
 TEST(ProcessorTest, rotateLeftC)

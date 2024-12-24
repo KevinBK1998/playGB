@@ -1,6 +1,24 @@
 #include <string>
 #include "Memory.h"
 
+enum WordRegister
+{
+    PC,
+    SP,
+    HL,
+    BC,
+    DE,
+    AF
+};
+
+const std::string WordRegisterNames[] = {
+    "PC",
+    "SP",
+    "HL",
+    "BC",
+    "DE",
+    "AF"};
+
 class Processor
 {
     Memory *mmu;
@@ -10,7 +28,9 @@ class Processor
     uint16_t pc, sp;
     void dump();
     void load(std::string regName, uint8_t *registerPtr, uint8_t byteValue);
+    void loadWord(WordRegister regName, uint16_t wordValue);
     void loadImmediate(std::string regName, uint8_t *registerPtr);
+    void loadImmediateWord(WordRegister regName);
     void push(std::string regName, uint16_t wordValue);
     void pop(std::string regName);
     // 0x05
@@ -23,12 +43,10 @@ class Processor
     void ld_a_DE();
     // 0x2*
     void jr_nz_n();
-    void ld_hl_nn();
     void ldi_HL_a();
     void inc_hl();
     void jumpRelativeZero();
-    // 0x31
-    void ld_sp_nn();
+    // 0x3*
     void decA();
     void ldd_HL_a();
     // 0x4F

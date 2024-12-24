@@ -51,6 +51,7 @@ void Processor::setSP(uint16_t wordValue) { sp = wordValue; }
 void Processor::step()
 {
     uint8_t opcode = mmu->readByte(pc);
+    // m++;
     logger.logWord(__PRETTY_FUNCTION__, "PC", pc++);
     logger.logWord(__PRETTY_FUNCTION__, "SP", sp);
     logger.logByte(__PRETTY_FUNCTION__, "OpCode", opcode);
@@ -79,6 +80,7 @@ void Processor::map(uint8_t opcode)
     case 0:
         logger.info(__PRETTY_FUNCTION__, "NOP");
         logger.logWord(__PRETTY_FUNCTION__, "PC", pc);
+        m++;
         break;
     case 0x5:
         dec_b();
@@ -108,7 +110,7 @@ void Processor::map(uint8_t opcode)
         jr_nz_n();
         break;
     case 0x21:
-        ld_hl_nn();
+        loadImmediateWord(HL);
         break;
     case 0x22:
         ldi_HL_a();
@@ -120,7 +122,7 @@ void Processor::map(uint8_t opcode)
         jumpRelativeZero();
         break;
     case 0x31:
-        ld_sp_nn();
+        loadImmediateWord(SP);
         break;
     case 0x32:
         ldd_HL_a();
@@ -155,6 +157,7 @@ void Processor::map(uint8_t opcode)
         ret();
         break;
     case 0xCB:
+        // m++;
         prefixMap(mmu->readByte(pc++));
         break;
     case 0xCD:
@@ -218,6 +221,25 @@ void Processor::load(string regName, uint8_t *registerPtr, uint8_t byteValue)
     logger.logByte(__PRETTY_FUNCTION__, regName, *registerPtr);
 }
 
+void Processor::loadWord(WordRegister regName, uint16_t wordValue)
+{
+    switch (regName)
+    {
+    case SP:
+        sp = wordValue;
+        break;
+    case HL:
+        setHL(wordValue);
+        break;
+
+    default:
+        exit(-1);
+        break;
+    }
+    m++;
+    logger.logByte(__PRETTY_FUNCTION__, WordRegisterNames[regName], wordValue);
+}
+
 void Processor::loadImmediate(string regName, uint8_t *registerPtr)
 {
     uint8_t n = mmu->readByte(pc++);
@@ -226,6 +248,17 @@ void Processor::loadImmediate(string regName, uint8_t *registerPtr)
     messageStream << "LD " << regName << ", " << hex << showbase << unsigned(n);
     logger.debug(__PRETTY_FUNCTION__, messageStream.str());
     load(regName, registerPtr, n);
+}
+
+void Processor::loadImmediateWord(WordRegister regName)
+{
+    uint16_t nn = mmu->readWord(pc);
+    pc += 2;
+    m += 2;
+    ostringstream messageStream;
+    messageStream << "LD " << WordRegisterNames[regName] << ", " << hex << showbase << unsigned(nn);
+    logger.debug(__PRETTY_FUNCTION__, messageStream.str());
+    loadWord(regName, nn);
 }
 
 void Processor::pop(string regName)
@@ -319,18 +352,13 @@ void Processor::jr_nz_n()
     int8_t n = mmu->readByte(pc++);
     messageStream << "JR NZ, " << (int)n;
     logger.info(__PRETTY_FUNCTION__, messageStream.str());
+    m += 2;
     if (!(f & 0x80))
+    {
+        m++;
         pc += n;
+    }
     logger.logWord(__PRETTY_FUNCTION__, "PC", pc);
-}
-
-void Processor::ld_hl_nn()
-{
-    logger.info(__PRETTY_FUNCTION__, "LD HL, NN");
-    setHL(mmu->readWord(pc));
-    pc += 2;
-    logger.logWord(__PRETTY_FUNCTION__, "PC", pc);
-    logger.logWord(__PRETTY_FUNCTION__, "HL", getHL());
 }
 
 void Processor::ldi_HL_a()
@@ -352,16 +380,7 @@ void Processor::inc_hl()
     logger.logWord(__PRETTY_FUNCTION__, "HL", getHL());
 }
 
-// 0x31
-void Processor::ld_sp_nn()
-{
-    logger.info(__PRETTY_FUNCTION__, "LDSP");
-    sp = mmu->readWord(pc);
-    pc += 2;
-    logger.logWord(__PRETTY_FUNCTION__, "PC", pc);
-    logger.logWord(__PRETTY_FUNCTION__, "SP", sp);
-}
-
+// 0x3*
 void Processor::ldd_HL_a()
 {
     logger.info(__PRETTY_FUNCTION__, "LDD[HL], A");
@@ -369,6 +388,7 @@ void Processor::ldd_HL_a()
     setHL(getHL() - 1);
     logger.logWord(__PRETTY_FUNCTION__, "PC", pc);
     logger.logWord(__PRETTY_FUNCTION__, "HL", getHL());
+    m += 2;
 }
 
 // 0x77
@@ -386,6 +406,7 @@ void Processor::xor_a()
     logger.info(__PRETTY_FUNCTION__, "XOR A");
     a = 0;
     f = 0x80;
+    m++;
     logger.logByte(__PRETTY_FUNCTION__, "A", a);
     logger.logByte(__PRETTY_FUNCTION__, "F", f);
 }
@@ -530,4 +551,5 @@ void Processor::bit_h(int n)
     logger.logWord(__PRETTY_FUNCTION__, "PC", pc);
     logger.logByte(__PRETTY_FUNCTION__, "H", h);
     logger.logByte(__PRETTY_FUNCTION__, "F", f);
+    m += 2;
 }
